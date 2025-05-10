@@ -1,0 +1,114 @@
+---
+title: "R_XGB"
+output: html_document
+date: "2025-05-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# load packages
+```{r}
+library(xgboost)
+library(caret)
+library(data.table)
+library(ggplot2)
+
+site_data_dir = "F:/gapfill"
+save_dir =  paste0(site_data_dir, "XGB_models/")
+```
+
+# load input data
+```{r}
+load_data <- function(site_data_dir, file_name, y_col) {
+  setwd(site_data_dir)
+  site_data <- fread(file_name)
+  
+  # Convert 'Date' to Date format
+  site_data[, Date := as.Date(Date)]
+  
+  # Take only the first 10,000 rows (for testing)
+  site_data <- site_data[1:min(3000, .N)]
+  
+  # Drop rows with missing values in y_col
+  site_data_no_na <- site_data[!is.na(get(y_col))]
+  site_data_no_na <- site_data_no_na[1:min(3000, .N)]
+  
+  return(list(site_data = site_data, site_data_no_na = site_data_no_na))
+}
+
+# --- Example usage:
+site_name <- "BART_NEON"
+y_col <- "NEE_for_gapfill"
+file_name <- paste0("data_for_XGB_", site_name, ".csv")
+
+# Call the function
+output <- load_data(site_data_dir, file_name, y_col)
+site_data <- output$site_data
+site_data_no_na <- output$site_data_no_na
+```
+
+
+# find best hyperparameters
+```{r}
+find_hyperparameters <- function(site_data_no_na, predictors, y_col, save_dir) {
+  # Prepare training data
+  X <- as.matrix(site_data_no_na[, predictors, with = FALSE])
+  y <- site_data_no_na[[y_col]]
+  
+  # Define hyperparameter search space
+  grid <- expand.grid(
+    nrounds = c(50, 100, 250),
+    max_depth = c(3, 5, 7),
+    eta = c(0.00001, 0.001, 0.01, 0.1, 0.3),
+    gamma = 0,                      # Not used in your original Python code, keep default
+    colsample_bytree = 1,            # Keep default
+    min_child_weight = c(3, 5, 7),
+    subsample = c(0.6, 0.8)
+  )
+  
+  # Set up train control
+  control <- trainControl(
+    method = "cv",
+    number = 10,
+    verboseIter = TRUE
+  )
+  
+  # Train model with grid search
+  set.seed(42)
+  xgb_train <- train(
+    x = X,
+    y = y,
+    method = "xgbTree",
+    trControl = control,
+    tuneGrid = grid,
+    metric = "RMSE"
+  )
+  
+  # Print best model
+  print(xgb_train$bestTune)
+  
+  # Save model
+  if (!dir.exists(save_dir)) {
+    dir.create(save_dir, recursive = TRUE)
+  }
+  
+  # model_path <- file.path(save_dir, "model.rds")
+  # saveRDS(xgb_train, model_path)
+  # cat("\nModel saved to:", model_path, "\n")
+  
+  # Save best parameters to CSV
+  best_params <- xgb_train$bestTune
+  csv_file <- file.path(save_dir, "FC_XGB_best_params_R.csv")
+  fwrite(best_params, csv_file)
+  cat("Best parameters saved to:", csv_file, "\n")
+  
+  return(best_params)
+}
+
+# --- Example usage:
+predictors <- c('TIMESTAMP_END', 'GCC', 'EVI', 'Tair', 'VPD', 'PPFD')
+param_FC <- find_hyperparameters(site_data_no_na, predictors, y_col, save_dir)
+```
+
