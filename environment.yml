@@ -1,0 +1,11 @@
+name: xgb_project
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - xgboost
+  - python=3.10  # or your preferred Python version
