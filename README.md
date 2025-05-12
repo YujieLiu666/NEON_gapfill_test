@@ -12,4 +12,7 @@ input data: data_for_XGB_BART_NEON.csv
 output:
 - gapfilled data: FC_XGB_prediction.csv
 - variable importance: FC_feature_importances.csv
+- FC_data_train_test: train and test data for 10-fold CV
 - learning curve folder: learning curve for each fold
+
+python environment: environment.yml
