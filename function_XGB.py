@@ -115,19 +115,19 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
     print(best_params)
 
     # Create a new model using the best parameters
-    reg.model = XGBRegressor(
+    model = XGBRegressor(
         random_state=42, booster='gbtree', tree_method='hist',
         **best_params
     )
     print("\nBest Model:")
-    print(reg.model)
+    print(model)
 
-    # Save model object
+    # Save model object as .pkl
     model_dir = Path(model_dir)
     model_dir.mkdir(parents=True, exist_ok=True)  # Make sure model_dir exists
     model_path = model_dir / "FC_XGB_model.pkl"
     with open(model_path, 'wb') as f:
-        pkl.dump(reg.model, f)
+        pkl.dump(model, f)
     print(f"\nModel saved to {model_path}.")
 
     # Save best hyperparameters to CSV
@@ -143,15 +143,6 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
 def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg):
     """
     Train an XGBoost model, predict on all data, and save outputs.
-
-    Parameters:
-    - site_data: DataFrame, full site data including missing values.
-    - site_data_no_na: DataFrame, site data with NA dropped for y_col.
-    - subset_features: list of strings, feature column names.
-    - y_col: string, target column name.
-    - best_params: dict, best hyperparameters for the model.
-    - model_dir: Path, directory to save the model.
-    - all_prediction_dir: Path, directory to save the prediction CSV.
     
     """
     # Fit model on flux data without NA
@@ -314,7 +305,7 @@ def check_model_performance(data_train_test_dir, predictors, y_col,
 # feature importance
 def feature_importance(site_data_no_na, predictors, y_col, site_data_dir, reg):
     """
-    Compute feature importances using a regression model and plot the results.
+    Compute feature importances and plot the results.
     """
     # Prepare the data
     X = site_data_no_na[predictors]
@@ -349,49 +340,7 @@ def feature_importance(site_data_no_na, predictors, y_col, site_data_dir, reg):
     plt.show()
 
     return feature_importance_df
-# compute annual sums
-# def cal_annual_sum(data, var_name, start_year, end_year, site_data_dir):
-#     """
-#     Calculate the annual sum of a variable (e.g., CO2) from half-hourly data.
-# 
-#     """
-#     # Initialize an empty dataframe to store aggregated data
-#     agg_data = pd.DataFrame()
-# 
-#     # Define molar mass of CO2 in g/mol
-#     molar_mass = 12.011
-# 
-#     # Define a function to get the number of days in a year
-#     def get_days_in_year(year):
-#         return 366 if calendar.isleap(year) else 365
-# 
-#     # Iterate over years from start_year to end_year
-#     for i in range(start_year, end_year + 1):
-#         # Subset data for the current year
-#         data_sub = data[data['Year'] == i]
-#         
-#         # Extract data variable
-#         half_hour = data_sub[var_name]
-#         
-#         # Calculate mean CO2 value
-#         agg_co2 = half_hour.mean(skipna=True)
-#         
-#         # Calculate aggregated value
-#         agg = agg_co2 * 1e-6 * molar_mass * 3600 * 24 * get_days_in_year(i)
-#         
-#         # Append to agg_data dataframe
-#         agg_data = agg_data.append(pd.DataFrame({'Year': [i], 'annual_sum': [agg]}), ignore_index=True)
-# 
-#     # Plot the data
-#     plt.figure(figsize=(10, 6))
-#     plt.plot(agg_data['Year'], agg_data['annual_sum'], marker='o', linestyle='-')
-#     plt.xlabel('Year')
-#     plt.ylabel('Annual Sum')
-#     plt.title('Annual Sum')
-#     plt.grid(True)
-#     plt.show()
-# 
-#     return agg_data
+
 
 def cal_annual_sum(data, var_name, start_year, end_year, site_data_dir):
     """
@@ -439,61 +388,6 @@ def cal_annual_sum(data, var_name, start_year, end_year, site_data_dir):
 
     return agg_data
 
-
-
-# compute monthly sums
-# def cal_monthly_sum(df, var_name, start_year, end_year, site_data_dir):
-#     """
-#     Aggregate half-hourly data to monthly sums and plot the results.
-#     
-#     """
-#     print("Check if you have 'Month' and 'Year' columns in input data!")
-# 
-#     # Initialize an empty DataFrame to store monthly sums
-#     monthly_df = pd.DataFrame(columns=['Year', 'Month', 'monthly_sum'])
-# 
-#     # Define molar mass of CO2 in g/mol
-#     molar_mass = 12.011
-# 
-#     # Define a function to get the number of days in a month
-#     def get_days_in_month(year, month):
-#         return calendar.monthrange(year, month)[1]
-# 
-#     # Filter data for the specified range of years
-#     df = df[(df['Year'] >= start_year) & (df['Year'] <= end_year)]
-# 
-#     # Iterate over each year and month
-#     for year in range(start_year, end_year + 1):
-#         for month in range(1, 13):
-#             df_sub = df[(df['Year'] == year) & (df['Month'] == month)]
-# 
-#             # Extract data variable
-#             half_hour = df_sub[var_name]
-# 
-#             # Calculate mean CO2 value
-#             agg_co2 = half_hour.mean(skipna=True)
-# 
-#             # Calculate aggregated value
-#             days_in_month = get_days_in_month(year, month)
-#             agg = agg_co2 * 1e-6 * molar_mass * 3600 * 24 * days_in_month
-# 
-#             # Append result
-#             monthly_df = monthly_df.append({'Year': year, 'Month': month, 'monthly_sum': agg}, ignore_index=True)
-# 
-#     # Plot the results
-#     plt.figure(figsize=(10, 6))
-#     for year in monthly_df['Year'].unique():
-#         year_data = monthly_df[monthly_df['Year'] == year]
-#         plt.plot(year_data['Month'], year_data['monthly_sum'], label=f'Year {year}')
-# 
-#     plt.xlabel('Month')
-#     plt.ylabel(var_name)
-#     plt.title(f'{var_name} by Month')
-#     plt.legend()
-#     plt.grid(True)
-#     plt.show()
-# 
-#     return monthly_df
 def cal_monthly_sum(df, var_name, start_year, end_year, site_data_dir):
     """
     Aggregate half-hourly data to monthly sums and plot the results.
