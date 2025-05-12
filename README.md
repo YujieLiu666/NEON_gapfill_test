@@ -8,3 +8,8 @@ input data: data_for_XGB_BART_NEON.csv
 - All the functions are stored in function_XGB.py.
 - workflow: workflow_XGB.ipynb to run the functions.
 - R_XGB.Rmd (experimental): converting python codes to R codes.
+
+output:
+- gapfilled data: FC_XGB_prediction.csv
+- variable importance: FC_feature_importances.csv
+- learning curve folder: learning curve for each fold
