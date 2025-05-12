@@ -15,8 +15,8 @@ library(caret)
 library(data.table)
 library(ggplot2)
 
-site_data_dir = "F:/gapfill"
-save_dir =  paste0(site_data_dir, "XGB_models/")
+site_data_dir = "F:/NEON_gapfill/"
+model_dir =  paste0(site_data_dir, "XGB_models/")
 ```
 
 # load input data
@@ -33,7 +33,6 @@ load_data <- function(site_data_dir, file_name, y_col) {
   
   # Drop rows with missing values in y_col
   site_data_no_na <- site_data[!is.na(get(y_col))]
-  site_data_no_na <- site_data_no_na[1:min(3000, .N)]
   
   return(list(site_data = site_data, site_data_no_na = site_data_no_na))
 }
@@ -52,7 +51,7 @@ site_data_no_na <- output$site_data_no_na
 
 # find best hyperparameters
 ```{r}
-find_hyperparameters <- function(site_data_no_na, predictors, y_col, save_dir) {
+find_hyperparameters <- function(site_data_no_na, predictors, y_col, model_dir) {
   # Prepare training data
   X <- as.matrix(site_data_no_na[, predictors, with = FALSE])
   y <- site_data_no_na[[y_col]]
@@ -90,17 +89,17 @@ find_hyperparameters <- function(site_data_no_na, predictors, y_col, save_dir) {
   print(xgb_train$bestTune)
   
   # Save model
-  if (!dir.exists(save_dir)) {
-    dir.create(save_dir, recursive = TRUE)
+  if (!dir.exists(model_dir)) {
+    dir.create(model_dir, recursive = TRUE)
   }
   
-  # model_path <- file.path(save_dir, "model.rds")
-  # saveRDS(xgb_train, model_path)
-  # cat("\nModel saved to:", model_path, "\n")
+  model_path <- file.path(model_dir, "model.rds")
+  saveRDS(xgb_train, model_path)
+  cat("\nModel saved to:", model_path, "\n")
   
   # Save best parameters to CSV
   best_params <- xgb_train$bestTune
-  csv_file <- file.path(save_dir, "FC_XGB_best_params_R.csv")
+  csv_file <- file.path(model_dir, "FC_XGB_best_params_R.csv")
   fwrite(best_params, csv_file)
   cat("Best parameters saved to:", csv_file, "\n")
   
@@ -109,6 +108,6 @@ find_hyperparameters <- function(site_data_no_na, predictors, y_col, save_dir) {
 
 # --- Example usage:
 predictors <- c('TIMESTAMP_END', 'GCC', 'EVI', 'Tair', 'VPD', 'PPFD')
-param_FC <- find_hyperparameters(site_data_no_na, predictors, y_col, save_dir)
+param_FC <- find_hyperparameters(site_data_no_na, predictors, y_col, model_dir)
 ```
 
