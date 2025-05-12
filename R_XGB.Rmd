@@ -39,13 +39,18 @@ load_data <- function(site_data_dir, file_name, y_col) {
 
 # --- Example usage:
 site_name <- "BART_NEON"
-y_col <- "NEE_for_gapfill"
+y_col <- "NEE_for_gapfill" # the target variable
 file_name <- paste0("data_for_XGB_", site_name, ".csv")
 
 # Call the function
 output <- load_data(site_data_dir, file_name, y_col)
 site_data <- output$site_data
 site_data_no_na <- output$site_data_no_na
+
+# predictors and train data
+predictors <- c('TIMESTAMP_END', 'GCC', 'EVI', 'Tair', 'VPD', 'PPFD')
+X_train = site_data_no_na[, ..predictors]
+y_train = unlist(site_data_no_na[, ..y_col])
 ```
 
 
@@ -93,9 +98,10 @@ find_hyperparameters <- function(site_data_no_na, predictors, y_col, model_dir) 
     dir.create(model_dir, recursive = TRUE)
   }
   
-  model_path <- file.path(model_dir, "model.rds")
-  saveRDS(xgb_train, model_path)
-  cat("\nModel saved to:", model_path, "\n")
+  # I want to save the model object, but this seems do not work for R???
+  # model_path <- file.path(model_dir, "model.rds")
+  # saveRDS(xgb_train, model_path)
+  # cat("\nModel saved to:", model_path, "\n")
   
   # Save best parameters to CSV
   best_params <- xgb_train$bestTune
@@ -107,7 +113,53 @@ find_hyperparameters <- function(site_data_no_na, predictors, y_col, model_dir) 
 }
 
 # --- Example usage:
-predictors <- c('TIMESTAMP_END', 'GCC', 'EVI', 'Tair', 'VPD', 'PPFD')
 param_FC <- find_hyperparameters(site_data_no_na, predictors, y_col, model_dir)
 ```
+## load model object after tuning
+```{r}
+# if the model object can not be saved, we can use the saved hyperparamters in csv to rebuild the model
+best_params <- fread(file.path(model_dir, "FC_XGB_best_params_R.csv"))
+# Extract Parameters and nrounds:
+nrounds <- best_params$nrounds  # Extract optimal number of rounds
+params_list <- as.list(best_params[, -"nrounds"])  # Convert remaining columns to a list
+print(params_list)
+
+# # Train the model
+# model <- xgboost(
+#   data = as.matrix(X_train),
+#   label = y_train,
+#   nrounds = nrounds,
+#   params = params_list,
+#   verbose = 1
+# )
+```
+
+# 10-fold CV and learning curve (to be updated)
+```{r}
+# do 10-fold CV
+cv_model <- xgb.cv(
+  params = params_list,
+  data = as.matrix(X_train),
+  label = y_train,
+  nrounds = nrounds, # nrounds
+  nfold = 10,
+  verbose = 1,
+  showsd = TRUE,         # show standard deviation
+  stratified = FALSE,    # good for regression
+  early_stopping_rounds = 20,
+  maximize = FALSE       # for RMSE, lower is better
+)
+# plot
+# xgb.cv() does not save the learning curves of each individual fold.
+# Instead, it aggregates across folds at every boosting round:
+ggplot(cv_model$evaluation_log, aes(x = iter)) +
+  geom_line(aes(y = train_rmse_mean, color = "Train RMSE")) +
+  geom_line(aes(y = test_rmse_mean, color = "Test RMSE")) +
+  labs(x = "Boosting Iterations", y = "RMSE", title = "XGBoost 10-Fold CV Learning Curve") +
+  scale_color_manual(values = c("Train RMSE" = "blue", "Test RMSE" = "red")) +
+  theme_minimal()
+
+# learning curve: issue with overfitting. It seems there is still something wrong with hyperparameter tuning. 
+```
+
 
