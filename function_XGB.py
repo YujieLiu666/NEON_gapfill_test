@@ -57,18 +57,8 @@ def load_data(site_data_dir, file_name, y_col):
     plt.xticks(rotation=45)
     plt.show()
 
-    # Drop rows with missing values in y_col
+    # Drop rows with missing values in target variable: y_col
     site_data_no_na = site_data.dropna(subset=[y_col])
-    
-    # # Plot the data after removing NAs
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(site_data_no_na['Date'], site_data_no_na[y_col].values, marker='o', linestyle='-', color='b')
-    # plt.title(f'Plot of {y_col} after dropping NAs (for training)')
-    # plt.xlabel('Date')
-    # plt.ylabel(y_col)
-    # plt.grid(True)
-    # plt.xticks(rotation=45)
-    # plt.show()
     return site_data, site_data_no_na
 
 # find hyperparameters
@@ -87,28 +77,17 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
     """
     
     # Define hyperparameter search space
-    # parameters = { 
-    #     "objective": ["reg:squarederror"],
-    #     "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
-    #     "max_depth": [3, 5, 7],
-    #     "min_child_weight": [3, 5, 7],
-    #     "subsample": [0.6, 0.8],
-    #     "reg_lambda": [0, 0.1, 1, 10],
-    #     "reg_alpha": [0, 0.1, 1, 10],
-    #     "n_estimators": [50, 100, 250]
-    # }
-    
-    parameters = { 
+    parameters = {
         "objective": ["reg:squarederror"],
         "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
-        "max_depth": [3, 4, 5],
-        "min_child_weight": [3, 4, 5],
+        "max_depth": [3, 5, 7],
+        "min_child_weight": [3, 5, 7],
         "subsample": [0.6, 0.8],
         "reg_lambda": [0, 0.1, 1, 10],
         "reg_alpha": [0, 0.1, 1, 10],
-        "n_estimators": [50, 100, 200]
+        "n_estimators": [50, 100, 250]
     }
-
+    
     # Prepare training data
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
