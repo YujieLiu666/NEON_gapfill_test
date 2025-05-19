@@ -1,6 +1,7 @@
 
 
-You can test the workflow using binder withought installing packages:
+You can test the workflow using binder without installing packages:
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 citation: https://doi.org/10.1016/j.agrformet.2025.110438 
