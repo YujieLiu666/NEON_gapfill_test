@@ -233,8 +233,7 @@ def create_train_test_folds(site_data, site_data_dir, y_col):
 
     print(f"Train/test files saved in {FC_dir}")
     
-def check_model_performance(data_train_test_dir, predictors, y_col,  
-                             learning_curve_dir, test_performance_dir, reg):
+def check_model_performance(data_train_test_dir, predictors, y_col, reg):
     """
     Train an XGBoost model with 10-fold evaluation, plot learning curves, and compute model performance metrics on test set.
     """
@@ -260,7 +259,7 @@ def check_model_performance(data_train_test_dir, predictors, y_col,
         reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
-            early_stopping_rounds=10,
+            early_stopping_rounds=5,
             verbose=False
         )
 
@@ -274,9 +273,10 @@ def check_model_performance(data_train_test_dir, predictors, y_col,
         plt.legend()
         plt.title(f'Training and Validation RMSE (Fold {i})')
         plt.grid(True)
-        plt.savefig(learning_curve_dir / f'FC_learning_curve{i}.png')
+        plt.show()
+        # plt.savefig(learning_curve_dir / f'FC_learning_curve{i}.png')
         plt.close()
-        print(f"Saved learning curve for Fold {i}")
+        # print(f"Saved learning curve for Fold {i}")
 
         # Evaluate performance on test set
         y_test_pred = reg.predict(X_test)
