@@ -5,7 +5,7 @@ You can test the workflow using binder without installing packages:
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 citation: https://doi.org/10.1016/j.agrformet.2025.110438 
-python environment: environment.yml
+- python environment: environment.yml
 
 Input data: data_for_XGB_BART_NEON.csv
 - PPFD, Tair and VPD are gapfilled using MDS;
