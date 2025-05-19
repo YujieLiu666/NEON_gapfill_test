@@ -21,8 +21,6 @@ Output:
 - variable importance: FC_feature_importances.csv
 - model after hyperparameter tuning: /XGB_models
 - FC_data_train_test: train and test data for 10-fold CV
-- learning curve folder: learning curve for each fold
-
 
 To be updated: 
 - R_XGB.Rmd (experimental): converting python codes to R codes.
