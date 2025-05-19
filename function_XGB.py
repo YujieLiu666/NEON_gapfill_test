@@ -3,6 +3,7 @@ import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
 import os
+import sklearn
 from pathlib import Path
 import pickle as pkl
 import sys
@@ -12,6 +13,20 @@ from sklearn.model_selection import GridSearchCV
 import csv
 from sklearn.metrics import mean_squared_error, r2_score
 import calendar
+
+print("Python version:", sys.version)
+print("NumPy version:", np.__version__)
+print("Pandas version:", pd.__version__)
+print("scikit-learn version:", sklearn.__version__)
+import xgboost
+print("xgboost version:", xgboost.__version__)
+print("Matplotlib version:", plt.matplotlib.__version__)
+
+# Limit threads for MKL, OpenBLAS, and BLIS
+# os.environ['OMP_NUM_THREADS'] = '1'
+# os.environ['MKL_NUM_THREADS'] = '1'
+# os.environ['OPENBLAS_NUM_THREADS'] = '1'
+# os.environ['BLIS_NUM_THREADS'] = '1'
 
 # load data 
 def load_data(site_data_dir, file_name, y_col):
@@ -72,15 +87,26 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
     """
     
     # Define hyperparameter search space
+    # parameters = { 
+    #     "objective": ["reg:squarederror"],
+    #     "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
+    #     "max_depth": [3, 5, 7],
+    #     "min_child_weight": [3, 5, 7],
+    #     "subsample": [0.6, 0.8],
+    #     "reg_lambda": [0, 0.1, 1, 10],
+    #     "reg_alpha": [0, 0.1, 1, 10],
+    #     "n_estimators": [50, 100, 250]
+    # }
+    
     parameters = { 
         "objective": ["reg:squarederror"],
         "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
-        "max_depth": [3, 5, 7],
-        "min_child_weight": [3, 5, 7],
+        "max_depth": [3, 4, 5],
+        "min_child_weight": [3, 4, 5],
         "subsample": [0.6, 0.8],
         "reg_lambda": [0, 0.1, 1, 10],
         "reg_alpha": [0, 0.1, 1, 10],
-        "n_estimators": [50, 100, 250]
+        "n_estimators": [50, 100, 200]
     }
 
     # Prepare training data
@@ -97,8 +123,7 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
         cv=10,
         verbose=1,
         scoring='neg_mean_squared_error',
-        n_jobs=10
-    )
+        n_jobs = 10)
 
     # Perform grid search
     xgb_grid.fit(X, y)
@@ -139,6 +164,7 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
             writer.writerow([param, value])
     print(f'Best parameters saved to {csv_file}.')
     return xgb_grid.best_params_
+  
 # get accurate prediction
 def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg):
     """
@@ -259,20 +285,20 @@ def check_model_performance(data_train_test_dir, predictors, y_col, reg):
         reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
-            early_stopping_rounds=5,
+            early_stopping_rounds=10,
             verbose=False
         )
 
         # Plot learning curve
         results = reg.evals_result()
-        plt.figure(figsize=(8, 5))
+        # plt.figure(figsize=(8, 5))
         plt.plot(results['validation_0']['rmse'], label='Train RMSE')
         plt.plot(results['validation_1']['rmse'], label='Valid RMSE')
-        plt.xlabel('Number of Iterations')
+        plt.xlabel('Number of iterations')
         plt.ylabel('Root Mean Squared Error (RMSE)')
         plt.legend()
         plt.title(f'Training and Validation RMSE (Fold {i})')
-        plt.grid(True)
+        # plt.grid(True)
         plt.show()
         # plt.savefig(learning_curve_dir / f'FC_learning_curve{i}.png')
         plt.close()
