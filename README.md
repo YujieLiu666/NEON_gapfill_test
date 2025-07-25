@@ -10,7 +10,7 @@ If you have any questions, suggestions, or are interested in collaborating, feel
 
 📝 **Citation**
 
-Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance CO₂ flux measurements from a temperate deciduous forest using eXtreme Gradient Boosting. Agricultural and Forest Meteorology, 364, 110438.
+_Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance CO₂ flux measurements from a temperate deciduous forest using eXtreme Gradient Boosting. Agricultural and Forest Meteorology, 364, 110438._
 
 DOI: https://doi.org/10.1016/j.agrformet.2025.110438 
 
