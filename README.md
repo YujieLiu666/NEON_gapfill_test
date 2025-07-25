@@ -6,7 +6,7 @@ This is based on my previous paper published in Agricultural and Forest Meteorol
 
 📬 **Questions or Collaborations?**
 
-If you have any questions, suggestions, or are interested in collaborating, feel free to reach out!
+If you have any questions, suggestions, or are interested in collaborating, feel free to reach out! yujie.liu@nau.edu 
 
 📝 **Citation**
 
@@ -14,8 +14,7 @@ Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance 
 
 DOI: https://doi.org/10.1016/j.agrformet.2025.110438 
 
-📧 **Contact information**
-yujie.liu@nau.edu
+
 
 
 
