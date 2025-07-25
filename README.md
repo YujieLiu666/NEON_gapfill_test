@@ -1,18 +1,19 @@
 
 
-📘 About this repository
+📘 **About this repository**
 
 This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a Binder environment, making it more user-friendly for everyone interested in gap-filling flux data using XGBoost. 
-📬 Questions or Collaborations?
+📬 **Questions or Collaborations?**
 
 If you have any questions, suggestions, or are interested in collaborating, feel free to reach out!
-📝 Citation
+
+📝 **Citation**
 
 Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance CO₂ flux measurements from a temperate deciduous forest using eXtreme Gradient Boosting. Agricultural and Forest Meteorology, 364, 110438.
 
 DOI: https://doi.org/10.1016/j.agrformet.2025.110438 
 
-📧 Contact information
+📧 **Contact information**
 yujie.liu@nau.edu
 
 
