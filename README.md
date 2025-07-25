@@ -1,6 +1,6 @@
 
 
-This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a Binder environment, making it more user-friendly for those interested in gap-filling flux data using XGBoost. If you have any questions or are interested in collaboration, feel free to reach out to me!
+This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a Binder environment, making it more user-friendly for everyone interested in gap-filling flux data using XGBoost. If you have any questions or are interested in collaboration, feel free to reach out to me!
 
 Citation: https://doi.org/10.1016/j.agrformet.2025.110438 
 
