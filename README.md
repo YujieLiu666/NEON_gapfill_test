@@ -1,11 +1,14 @@
 
 
-You can test the workflow using binder without installing packages:
+This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a Binder environment, making it more user-friendly for those interested in gap-filling flux data using XGBoost. If you have any questions or are interested in collaboration, feel free to reach out to me!
+
+Citation: https://doi.org/10.1016/j.agrformet.2025.110438 
+Contact information: yujie.liu@nau.edu
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
-citation: https://doi.org/10.1016/j.agrformet.2025.110438 
-contact information: yujie.liu@nau.edu
+
+
 - python environment: environment.yml
 
 Input data: data_for_XGB_BART_NEON.csv
