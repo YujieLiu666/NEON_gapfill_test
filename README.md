@@ -38,8 +38,5 @@ Output:
 - model after hyperparameter tuning: /XGB_models
 - FC_data_train_test: train and test data for 10-fold CV
 
-Working in progress: 
-- R_XGB.Rmd (experimental): converting python codes to R codes.
-- current issue: bad hyperparameter tuning 
 
 
