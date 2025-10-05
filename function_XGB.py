@@ -14,7 +14,7 @@ import csv
 from sklearn.metrics import mean_squared_error, r2_score
 import calendar
 import joblib
-
+from xgboost.callback import EarlyStopping # New style (XGBoost >= 2.0)
 
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
@@ -315,10 +315,20 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
 
         # Fit model to each fold
         print(f"  Train model for Fold {fold_number}...")
+        
+        # reg.fit(
+        #     X_train, y_train,
+        #     eval_set=[(X_train, y_train), (X_test, y_test)],
+        #     early_stopping_rounds=10,
+        #     verbose=False
+        # )
+        
+        # New style (XGBoost >= 2.0)
         reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
-            early_stopping_rounds=10,
+            eval_metric="rmse",
+            callbacks=[EarlyStopping(rounds=10, save_best=True)],
             verbose=False
         )
 
