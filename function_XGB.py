@@ -24,7 +24,7 @@ print("scikit-learn version:", sklearn.__version__)
 import xgboost
 print("xgboost version:", xgboost.__version__)
 print("Matplotlib version:", plt.matplotlib.__version__)
-print("The old early_stopping_rounds parameter still works for backward compatibility, but using callbacks is the recommended approach in XGBoost >= 2.0 because it is more modular and extensible.")
+
 
 # If you use the package on HPC:
 # Limit threads for MKL, OpenBLAS, and BLIS
@@ -211,7 +211,7 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     print(f"\nModel saved to {model_path}.")
 
 #%% do gapfilling
-def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg, plot=False):
+def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, plot=False):
     """
     Train an XGBoost model, predict on all data, and save outputs.
 
@@ -258,12 +258,8 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
         site_data['XGB_FC_fall']
     )
 
-    # --- Step 4: Save to CSV ---
-    # prediction_file = site_data_dir / "XGB_prediction.csv"
-    # site_data.to_csv(prediction_file, index=False)
-    # print(f"Predictions saved to: {prediction_file}")
 
-    # --- Step 5 (optional): Plots ---
+    # --- Step 4: Figures
     if plot:
         # Plot 1: 
         plt.figure(figsize=(14, 6))
