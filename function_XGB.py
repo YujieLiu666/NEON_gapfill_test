@@ -351,29 +351,28 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     print("--------------------------------------------------------")
 
 #%% check feature importance
-def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, reg):
+def check_feature_importance(site_data_no_na, predictors, y_col, reg):
     """
-    Compute and visualize feature importances 
+    Compute and visualize feature importances.
 
     Parameters
     ----------
     site_data_no_na : pandas.DataFrame
         Input dataset with no missing values.
     predictors : list of str
-        List of column names in site_data_no_na to be used as predictors (features).
+        List of column names in `site_data_no_na` to be used as predictors (features).
     y_col : str
-        Column name of the target variable in site_data_no_na.
-    site_data_dir : pathlib.Path
-        Directory where the feature importance CSV (and optionally plots) will be saved.
+        Column name of the target variable in `site_data_no_na`.
     reg : object
         Regression model with `fit`, `predict`, and `feature_importances_` attributes
         (e.g., XGBRegressor).
-    
+
     Returns
     -------
     pandas.DataFrame
         DataFrame containing features and their importance values, sorted in descending order.
     """
+
     # Prepare the data
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
@@ -387,10 +386,9 @@ def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, 
     feature_importance_df['predictors'] = predictors
 
     # Sort by feature importances
-    feature_importance_df = feature_importance_df.sort_values(by='Feature_Importances', ascending=False)
-
-    # Save feature importances to CSV
-    # feature_importance_df.to_csv(site_data_dir / "Feature_importances.csv", index=False)
+    feature_importance_df = feature_importance_df.sort_values(
+        by='Feature_Importances', ascending=False
+    )
 
     # Plot feature importances
     plt.figure(figsize=(12, 8))
@@ -398,16 +396,11 @@ def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, 
     plt.title('Feature Importances')
     plt.xlabel('Features')
     plt.ylabel('Importance')
-
     plt.grid(True)
     plt.tight_layout()
-
-    # # Save the plot as PNG file
-    # plt.savefig("Feature_importances.png")
     plt.show()
 
     return feature_importance_df
-
 #%% compute annual sums
 def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
     """
