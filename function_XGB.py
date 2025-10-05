@@ -85,8 +85,6 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     - y_col: string. Name of the response variable (y).
     - model_dir: Path object or string. Directory to save the model and best parameters.
     - n_jobs: int. Number of parallel jobs for GridSearchCV.
-
-    
     """
     
     # Define hyperparameter search space
@@ -197,9 +195,9 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
     )
 
     # --- Step 4: Save to CSV ---
-    prediction_file = site_data_dir / "XGB_prediction.csv"
-    site_data.to_csv(prediction_file, index=False)
-    print(f"Predictions saved to: {prediction_file}")
+    # prediction_file = site_data_dir / "XGB_prediction.csv"
+    # site_data.to_csv(prediction_file, index=False)
+    # print(f"Predictions saved to: {prediction_file}")
 
     # --- Step 5 (optional): Plots ---
     if plot:
@@ -491,7 +489,6 @@ def cal_FC_monthly_sum(df, var_name, start_year, end_year, plot=True):
         DataFrame with columns 'Year', 'Month', and 'monthly_sum'.
     """
 
-    
 
     # Initialize an empty DataFrame to store monthly sums
     monthly_df = pd.DataFrame(columns=['Year', 'Month', 'monthly_sum'])
