@@ -33,9 +33,50 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['BLIS_NUM_THREADS'] = '1'
 
 #%% load input data
+# def load_data(site_data_dir, file_name, y_col, plot=True):
+#     """
+#     Load site data from a CSV file, optionally plot the original data.
+
+#     Parameters:
+#     - site_data_dir : Path or str
+#         Directory containing the CSV file.
+#     - file_name : str
+#         Name of the CSV file to load (e.g., 'data_for_XGB_US-XYZ.csv').
+#     - y_col : str
+#         The name of the column to plot.
+#     - plot : bool, default True
+#         If True, generate a plot of the original target column.
+
+#     Returns:
+#     - site_data : DataFrame
+#         Original site data.
+#     - site_data_no_na : DataFrame
+#         Site data after dropping rows with missing values in y_col.
+#     """
+#     site_data = pd.read_csv(Path(site_data_dir) / file_name)
+#     if 'Date' in site_data.columns:
+#         site_data['Date'] = pd.to_datetime(site_data['Date'])
+
+#     # Drop rows with missing target values
+#     site_data_no_na = site_data.dropna(subset=[y_col])
+
+#     # Optional plotting
+#     if plot:
+#         plt.figure(figsize=(12, 6))
+#         if 'Date' in site_data.columns:
+#             plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
+#             plt.xlabel('Date')
+#         else:
+#             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
+#         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
+#         plt.title(f'{y_col} original data')
+#         plt.grid(True)
+#         plt.show()
+
+#     return site_data, site_data_no_na
 def load_data(site_data_dir, file_name, y_col, plot=True):
     """
-    Load site data from a CSV file, optionally plot the original data.
+    Load site data from a CSV file, optionally plot the original data and variable coverage.
 
     Parameters:
     - site_data_dir : Path or str
@@ -45,7 +86,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     - y_col : str
         The name of the column to plot.
     - plot : bool, default True
-        If True, generate a plot of the original target column.
+        If True, generate a plot of the original target column and variable coverage.
 
     Returns:
     - site_data : DataFrame
@@ -53,6 +94,11 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     - site_data_no_na : DataFrame
         Site data after dropping rows with missing values in y_col.
     """
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from pathlib import Path
+
+    # Load CSV
     site_data = pd.read_csv(Path(site_data_dir) / file_name)
     if 'Date' in site_data.columns:
         site_data['Date'] = pd.to_datetime(site_data['Date'])
@@ -60,16 +106,32 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     # Drop rows with missing target values
     site_data_no_na = site_data.dropna(subset=[y_col])
 
-    # Optional plotting
     if plot:
+        # 1️⃣ Plot original target variable
         plt.figure(figsize=(12, 6))
         if 'Date' in site_data.columns:
-            plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
+            plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None',
+                     color='blue', alpha=0.6)
             plt.xlabel('Date')
         else:
             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title(f'{y_col} original data')
+        plt.grid(True)
+        plt.show()
+
+        # 2️⃣ Plot coverage of key variables by Year
+        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill']
+        coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
+
+        plt.figure(figsize=(12, 6))
+        for var in vars_to_check:
+            plt.plot(coverage.index, coverage[var], marker='o', linestyle='-', label=var)
+        plt.ylim(0, 1.05)
+        plt.xlabel('Year')
+        plt.ylabel('Coverage (fraction of non-missing values)')
+        plt.title('Variable Coverage by Year')
+        plt.legend()
         plt.grid(True)
         plt.show()
 
