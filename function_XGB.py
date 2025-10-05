@@ -318,6 +318,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         X_test, y_test = test[predictors], test[y_col]
 
         # Fit model to each fold
+        print(f"  Train model for Fold {fold_number}...")
         reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
@@ -326,6 +327,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         )
 
         # Learning curve for each fold
+        print(f"  Plotting learning curve for Fold {fold_number}...")
         results = reg.evals_result()
         plt.plot(results['validation_0']['rmse'], label='Train RMSE')
         plt.plot(results['validation_1']['rmse'], label='Valid RMSE')
