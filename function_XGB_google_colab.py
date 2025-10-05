@@ -74,9 +74,9 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     return site_data, site_data_no_na
 
 #%% hypterparamter tuning
-def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=10): 
+def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=10, plot_cv_results=False):
     """
-    Find the best hyperparameters for XGBoost using GridSearchCV, 
+    Find the best hyperparameters for XGBoost using GridSearchCV,
     and save the model and best parameters.
 
     Parameters:
@@ -85,30 +85,29 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     - y_col: string. Name of the response variable (y).
     - model_dir: Path object or string. Directory to save the model and best parameters.
     - n_jobs: int. Number of parallel jobs for GridSearchCV.
-
-    
+    - plot_cv_results: bool. Whether to plot mean test score for each parameter combination.
     """
-    
-    # Define hyperparameter search space
-    parameters = {
-        "objective": ["reg:squarederror"],
-        "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
-        "max_depth": [3, 5, 7],
-        "min_child_weight": [3, 5, 7],
-        "subsample": [0.6, 0.8],
-        "reg_lambda": [0, 0.1, 1, 10],
-        "reg_alpha": [0, 0.1, 1, 10],
-        "n_estimators": [50, 100, 250]
-    }
-    
+
     # Prepare training data
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
 
-    # Base model
-    model = XGBRegressor()
+    # Define hyperparameter search space
+    parameters = {
+        "objective": ["reg:squarederror"],
+        "learning_rate": [0.001, 0.01, 0.1, 0.3],
+        "max_depth": [3, 5, 7],
+        "min_child_weight": [1, 3, 5],
+        "subsample": [0.6, 0.8, 1.0],
+        "reg_lambda": [0, 0.1, 1, 10],
+        "reg_alpha": [0, 0.1, 1, 10],
+        "n_estimators": [50, 100, 250]
+    }
 
-    # Set up GridSearchCV
+    # Base model
+    model = XGBRegressor(verbosity=1, tree_method='hist', random_state=42)
+
+    # GridSearchCV
     xgb_grid = GridSearchCV(
         estimator=model,
         param_grid=parameters,
@@ -118,35 +117,44 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
         n_jobs=n_jobs
     )
 
-    # Perform grid search
+    # Fit GridSearch
     xgb_grid.fit(X, y)
 
-    # Print CV results
-    print("Cross-validation scores:")
-    cv_results = xgb_grid.cv_results_
-    for mean_score, params in zip(cv_results["mean_test_score"], cv_results["params"]):
-        print(f"Mean Score: {mean_score:.4f}, Parameters: {params}")
-
-    # Extract best parameters
+    # Extract results
+    cv_results = pd.DataFrame(xgb_grid.cv_results_)
     best_params = xgb_grid.best_params_
     print("\nBest Parameters Found:")
     print(best_params)
 
-    # Create a new model using the best parameters
-    model = XGBRegressor(
-        random_state=42, booster='gbtree', tree_method='hist',
+    # Optional: plot mean test score
+    if plot_cv_results:
+        mean_scores = cv_results['mean_test_score']
+        plt.figure(figsize=(10,6))
+        plt.plot(range(len(mean_scores)), mean_scores, marker='o')
+        plt.xlabel("Parameter combination index")
+        plt.ylabel("Mean CV score (neg MSE)")
+        plt.title("GridSearchCV Results")
+        plt.grid(True)
+        plt.show()
+
+    # Train final model with best params
+    final_model = XGBRegressor(
+        verbosity=1,
+        tree_method='hist',
+        random_state=42,
         **best_params
     )
-    print("\nBest Model:")
-    print(model)
+    final_model.fit(X, y)
 
-    # Save model object as .pkl
+    # Save model using joblib
     model_dir = Path(model_dir)
-    model_dir.mkdir(parents=True, exist_ok=True)  # Make sure model_dir exists
-    model_path = model_dir / f"XGB_model_{y_col}.pkl"
-    with open(model_path, 'wb') as f:
-        pkl.dump(model, f)
-    print(f"\nModel saved to {model_path}.")
+    model_dir.mkdir(parents=True, exist_ok=True)
+    model_path = model_dir / f"XGB_model_{y_col}.joblib"
+    joblib.dump(final_model, model_path)
+    print(f"\nFinal model saved to {model_path}")
+
+    return final_model, best_params, cv_results
+
 
 #%% do gapfilling
 def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg, plot=False):
