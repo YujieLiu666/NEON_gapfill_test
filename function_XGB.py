@@ -15,7 +15,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import calendar
 import joblib
 
-print("---------------------------------------")
+
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
 print("Pandas version:", pd.__version__)
@@ -23,7 +23,7 @@ print("scikit-learn version:", sklearn.__version__)
 import xgboost
 print("xgboost version:", xgboost.__version__)
 print("Matplotlib version:", plt.matplotlib.__version__)
-print("---------------------------------------")
+
 
 # If you use the package on HPC:
 # Limit threads for MKL, OpenBLAS, and BLIS
