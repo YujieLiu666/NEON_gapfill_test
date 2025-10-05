@@ -32,7 +32,7 @@ With just one click, users can launch a virtual compute environment with all dep
 
 - 💾 **Output:**  
   - Gapfilled data: `FC_XGB_prediction.csv`  
-  - Model after hyperparameter tuning: `/XGB_models`  
+  - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
   - FC_data_train_test: train and test data for 10-fold CV
 
 
