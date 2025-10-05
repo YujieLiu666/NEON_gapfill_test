@@ -2,7 +2,7 @@
 
 📘 **About this repository**
 
-This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
+This is based on my previous paper published in _Agricultural and Forest Meteorology_. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
 
 📬 **Questions or Collaborations?**
 
