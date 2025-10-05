@@ -68,7 +68,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
             plt.xlabel('Date')
         else:
             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
-        plt.ylabel(y_col)
+        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title(f'{y_col} original data')
         plt.grid(True)
         plt.show()
@@ -210,7 +210,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
         plt.scatter(site_data['Date'], site_data['XGB_FC_fall'], 
                     label="Predicted", s=10, alpha=0.3, color="orange", edgecolors="none")
         plt.xlabel("Date")
-        plt.ylabel(y_col)
+        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title(f"Observed vs Predicted over Time for {y_col}")
         plt.legend()
         plt.show()
@@ -220,6 +220,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
         plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
                     label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
         plt.xlabel("Date")
+        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title("Measured + gap-filled time series")
         plt.legend()
         plt.show()
