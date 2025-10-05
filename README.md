@@ -35,9 +35,8 @@ https://doi.org/10.1016/j.agrformet.2025.110438
   - Workflow: `workflow_XGB.ipynb` to run the functions
 
 - 💾 **Output:**  
-  - Gapfilled data: `FC_XGB_prediction.csv`  
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
-  - FC_data_train_test: train and test data for 10-fold CV
+
 
 
 
