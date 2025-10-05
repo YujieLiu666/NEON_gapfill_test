@@ -283,6 +283,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     """
 
     # --- Step 1: Shuffle & assign folds ---
+    print("Step 1: Shuffle & assign folds ...")
     shuffle_data = site_data.sample(frac=1).reset_index(drop=True)
     shuffle_data['Time'] = np.arange(1, len(shuffle_data) + 1)
 
@@ -297,11 +298,12 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
 
     shuffle_data = shuffle_data.sort_values('Time').reset_index(drop=True)
 
-    # --- Step 2: Train & evaluate ---
+    # --- Step 2: Train & evaluate for each fold ---
+    print("Step 2: Train & evaluate for each fold ...")
     rmse_list, r2_list, mape_list = [], [], []
 
     for fold_number in range(1, n_folds + 1):
-        print(f"Processing Fold {fold_number}...")
+        print(f" Processing Fold {fold_number}...")
 
         # Split into train/test by fold
         train = shuffle_data.copy()
