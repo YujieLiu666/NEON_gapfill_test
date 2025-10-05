@@ -4,6 +4,17 @@
 
 This is based on my previous paper published in _Agricultural and Forest Meteorology_. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
 
+## 🚀 Two ways to get started
+
+**Google Colab**  
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YujieLiu666/NEON_gapfill_test/blob/main/workflow_XGB_google_colab.ipynb)
+
+**Binder**
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
+
+
 📬 **Questions or Collaborations?**
 
 If you have any questions, suggestions, or are interested in collaborating, feel free to reach out! yujie.liu@nau.edu 
@@ -24,19 +35,10 @@ https://doi.org/10.1016/j.agrformet.2025.110438
   - Workflow: `workflow_XGB.ipynb` to run the functions
 
 - 💾 **Output:**  
-  - Gapfilled data: `FC_XGB_prediction.csv`  
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
-  - FC_data_train_test: train and test data for 10-fold CV
 
 
-🔗 What is Binder?
 
-[Binder](https://mybinder.org/) is an open-source service that makes GitHub repositories interactive.
-With just one click, users can launch a virtual compute environment with all dependencies installed. It is especially useful for teaching, code demonstrations, and sharing reproducible research. 
-
-**Please click on the badge below**:
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 
 
