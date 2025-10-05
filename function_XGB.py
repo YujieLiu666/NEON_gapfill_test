@@ -73,144 +73,11 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     return site_data, site_data_no_na
 
 #%% hypterparamter tuning
-# def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir):
-#     """
-#     Find the best hyperparameters for XGBoost using GridSearchCV, and save the model and best parameters.
 
-#     Parameters:
-#     - site_data_no_na: DataFrame. Cleaned data (no NA values in y_col).
-#     - subset_columns: list of strings. Column names to be used as predictors (X).
-#     - y_col: string. Name of the response variable (y).
-#     - model_dir: Path object or string. Directory to save the model and best parameters.
 
-#     Returns:
-#     - reg.model: trained XGBRegressor model with the best parameters.
-#     """
-    
-#     # Define hyperparameter search space
-#     parameters = {
-#         "objective": ["reg:squarederror"],
-#         "learning_rate": [0.00001, 0.001, 0.01, 0.1, 0.3],
-#         "max_depth": [3, 5, 7],
-#         "min_child_weight": [3, 5, 7],
-#         "subsample": [0.6, 0.8],
-#         "reg_lambda": [0, 0.1, 1, 10],
-#         "reg_alpha": [0, 0.1, 1, 10],
-#         "n_estimators": [50, 100, 250]
-#     }
-    
-#     # Prepare training data
-#     X = site_data_no_na[predictors]
-#     y = site_data_no_na[y_col]
-
-#     # Create base model
-#     model = XGBRegressor()
-
-#     # Set up GridSearchCV
-#     xgb_grid = GridSearchCV(
-#         estimator=model,
-#         param_grid=parameters,
-#         cv=10,
-#         verbose=1,
-#         scoring='neg_mean_squared_error',
-#         n_jobs = 10)
-
-#     # Perform grid search
-#     xgb_grid.fit(X, y)
-
-#     # Print cross-validation results
-#     print("Cross-validation scores:")
-#     cv_results = xgb_grid.cv_results_
-#     for mean_score, params in zip(cv_results["mean_test_score"], cv_results["params"]):
-#         print(f"Mean Score: {mean_score}, Parameters: {params}")
-
-#     # Extract best parameters
-#     best_params = xgb_grid.best_params_
-#     print("\nBest Parameters Found:")
-#     print(best_params)
-
-#     # Create a new model using the best parameters
-#     model = XGBRegressor(
-#         random_state=42, booster='gbtree', tree_method='hist',
-#         **best_params
-#     )
-#     print("\nBest Model:")
-#     print(model)
-
-#     # Save model object as .pkl
-#     model_dir = Path(model_dir)
-#     model_dir.mkdir(parents=True, exist_ok=True)  # Make sure model_dir exists
-#     model_path = model_dir / "XGB_model.pkl"
-#     with open(model_path, 'wb') as f:
-#         pkl.dump(model, f)
-#     print(f"\nModel saved to {model_path}.")
-
-#     return xgb_grid.best_params_
   
 
-# #%% do gapfilling
-# def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg, plot=False):
-#     """
-#     Train an XGBoost model, predict on all data, and save outputs.
-#     Optionally plot the gap-filled target column.
-    
-#     Parameters:
-#     - site_data : DataFrame
-#         Original dataset (may contain missing values in y_col).
-#     - site_data_no_na : DataFrame
-#         Dataset with rows without missing values in y_col (used for training).
-#     - predictors : list of str
-#         Column names to use as predictors (X).
-#     - y_col : str
-#         Name of the target variable (y).
-#     - site_data_dir : Path or str
-#         Directory to save the prediction CSV.
-#     - reg : XGBRegressor
-#         An XGBoost regressor object.
-#     - plot : bool, default False
-#         If True, generate a plot of the gap-filled column.
-    
-#     Returns:
-#     - site_data : DataFrame
-#         Original dataset augmented with predictions and gap-filled column.
-#     """
-#     # Fit model on flux data without NA
-#     X = site_data_no_na[predictors]
-#     y = site_data_no_na[y_col]
-#     reg.fit(X, y)
 
-#     # Predict on all data
-#     X_all = site_data[predictors]
-#     y_pred = reg.predict(X_all)
-
-#     # Save predictions into original dataframe
-#     site_data['XGB_fall'] = y_pred
-#     site_data['XGB_f'] = np.where(site_data[y_col].notnull(), site_data[y_col], site_data['XGB_fall'])
-
-#     # Save full dataframe with predictions
-#     site_data_dir = Path(site_data_dir)
-#     site_data_dir.mkdir(parents=True, exist_ok=True)
-#     prediction_file = site_data_dir / "XGB_prediction.csv"
-#     site_data.to_csv(prediction_file, index=False)
-#     print(f"Predictions saved to: {prediction_file}")
-
-#     # Optional plotting
-#     if plot:
-#         plt.figure(figsize=(12, 6))
-#         if 'Date' in site_data.columns:
-#             plt.plot(site_data['Date'], site_data[y_col], label='Original', marker='o', linestyle='None', alpha=0.6)
-#             plt.plot(site_data['Date'], site_data['XGB_f'], label='Gap-filled', color='red', alpha=0.8)
-#             plt.xlabel('Date')
-#         else:
-#             plt.plot(site_data[y_col], label='Original', marker='o', linestyle='None', alpha=0.6)
-#             plt.plot(site_data['XGB_f'], label='Gap-filled', color='red', alpha=0.8)
-#         plt.ylabel(y_col)
-#         plt.title('Gap-filled Target Column using XGBoost')
-#         plt.legend()
-#         plt.grid(True)
-#         plt.show()
-
-#     return site_data
 def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=10): 
     """
     Find the best hyperparameters for XGBoost using GridSearchCV, 
@@ -223,8 +90,7 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     - model_dir: Path object or string. Directory to save the model and best parameters.
     - n_jobs: int. Number of parallel jobs for GridSearchCV.
 
-    Returns:
-    - best_params: dict. Best hyperparameters found.
+    
     """
     
     # Define hyperparameter search space
@@ -285,8 +151,6 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     with open(model_path, 'wb') as f:
         pkl.dump(model, f)
     print(f"\nModel saved to {model_path}.")
-
-    return best_params
 
 #%% check model performance
 def compute_performance_metrics(truth, prediction):
