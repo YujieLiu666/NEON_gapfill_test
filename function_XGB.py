@@ -23,7 +23,7 @@ print("scikit-learn version:", sklearn.__version__)
 import xgboost
 print("xgboost version:", xgboost.__version__)
 print("Matplotlib version:", plt.matplotlib.__version__)
-
+print("The old early_stopping_rounds parameter still works for backward compatibility, but using callbacks is the recommended approach in XGBoost >= 2.0 because it is more modular and extensible.")
 
 # If you use the package on HPC:
 # Limit threads for MKL, OpenBLAS, and BLIS
