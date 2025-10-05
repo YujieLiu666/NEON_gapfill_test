@@ -2,7 +2,7 @@
 
 📘 **About this repository**
 
-This is based on my previous paper published in Agricultural and Forest Meteorology. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
+This is based on my previous paper published in _Agricultural and Forest Meteorology_. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
 
 📬 **Questions or Collaborations?**
 
@@ -14,6 +14,7 @@ _Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance
 https://doi.org/10.1016/j.agrformet.2025.110438 
 
 🔗 What is Binder?
+
 [Binder](https://mybinder.org/) is an open-source service that makes GitHub repositories interactive.
 With just one click, users can launch a virtual compute environment with all dependencies installed. It is especially useful for teaching, code demonstrations, and sharing reproducible research. 
 
@@ -32,7 +33,7 @@ With just one click, users can launch a virtual compute environment with all dep
 
 - 💾 **Output:**  
   - Gapfilled data: `FC_XGB_prediction.csv`  
-  - Model after hyperparameter tuning: `/XGB_models`  
+  - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
   - FC_data_train_test: train and test data for 10-fold CV
 
 
