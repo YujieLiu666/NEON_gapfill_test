@@ -183,6 +183,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
     """
 
     # --- Step 1: Fit model on non-missing data ---
+    np.random.seed(42) 
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
     reg.fit(X, y)
@@ -387,7 +388,7 @@ def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, 
     feature_importance_df = feature_importance_df.sort_values(by='Feature_Importances', ascending=False)
 
     # Save feature importances to CSV
-    feature_importance_df.to_csv(site_data_dir / "Feature_importances.csv", index=False)
+    # feature_importance_df.to_csv(site_data_dir / "Feature_importances.csv", index=False)
 
     # Plot feature importances
     plt.figure(figsize=(12, 8))
@@ -395,7 +396,7 @@ def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, 
     plt.title('Feature Importances')
     plt.xlabel('Features')
     plt.ylabel('Importance')
-    plt.xticks(rotation=45)
+
     plt.grid(True)
     plt.tight_layout()
 
@@ -406,20 +407,27 @@ def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, 
     return feature_importance_df
 
 #%% compute annual sums
-def cal_FC_annual_sum(data, var_name, start_year, end_year, site_data_dir=None, plot=True):
+def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
     """
-    Calculate the annual sum of a variable (i.e., FCO2) from half-hourly data.
+    Calculate the annual sum of a variable (e.g., FCO2) from half-hourly data.
 
-    Parameters:
-    - data: DataFrame containing half-hourly data with a 'Year' column.
-    - var_name: string, the column name of the variable to sum.
-    - start_year: int, first year to aggregate.
-    - end_year: int, last year to aggregate.
-    - site_data_dir: optional, not used for plotting here but kept for compatibility.
-    - plot: bool, whether to plot the annual sums.
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        DataFrame containing half-hourly data with a 'Year' column.
+    var_name : str
+        Column name of the variable to sum.
+    start_year : int
+        First year to aggregate.
+    end_year : int
+        Last year to aggregate.
+    plot : bool, optional (default=True)
+        Whether to plot the annual sums.
 
-    Returns:
-    - agg_data: DataFrame with columns 'Year' and 'annual_sum'.
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with columns 'Year' and 'annual_sum'.
     """
 
     # Initialize an empty dataframe to store aggregated data
@@ -454,7 +462,7 @@ def cal_FC_annual_sum(data, var_name, start_year, end_year, site_data_dir=None, 
             agg_data['annual_sum'],
             marker='o',
             linestyle='-',
-            color='b'  # set line and markers to blue
+            color='b'
         )
         for x, y in zip(agg_data['Year'], agg_data['annual_sum']):
             plt.text(x, y, f'{y:.1f}', ha='center', va='bottom', fontsize=9)
@@ -466,14 +474,31 @@ def cal_FC_annual_sum(data, var_name, start_year, end_year, site_data_dir=None, 
         
     return agg_data
 
-
 #%% compute monthly sums
-def cal_FC_monthly_sum(df, var_name, start_year, end_year, site_data_dir):
+def cal_FC_monthly_sum(df, var_name, start_year, end_year, plot=True):
     """
-    Aggregate half-hourly data to monthly sums and plot the results.
+    Aggregate half-hourly data to monthly sums and optionally plot the results.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing half-hourly data with 'Year' and 'Month' columns.
+    var_name : str
+        Column name of the variable to aggregate (e.g., FCO2).
+    start_year : int
+        First year to aggregate.
+    end_year : int
+        Last year to aggregate.
+    plot : bool, optional (default=True)
+        Whether to generate a plot of the monthly sums.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with columns 'Year', 'Month', and 'monthly_sum'.
     """
 
-    print("Check if you have 'Month' and 'Year' columns in input data!")
+    
 
     # Initialize an empty DataFrame to store monthly sums
     monthly_df = pd.DataFrame(columns=['Year', 'Month', 'monthly_sum'])
@@ -509,43 +534,86 @@ def cal_FC_monthly_sum(df, var_name, start_year, end_year, site_data_dir):
                 ignore_index=True
             )
 
-    # Plot the results
-    plt.figure(figsize=(10, 6))
-    for year in monthly_df['Year'].unique():
-        year_data = monthly_df[monthly_df['Year'] == year]
-        plt.plot(year_data['Month'], year_data['monthly_sum'], label=f'Year {year}')
+    # Plot the results if requested
+    if plot:
+        plt.figure(figsize=(10, 6))
+        for year in monthly_df['Year'].unique():
+            year_data = monthly_df[monthly_df['Year'] == year]
+            plt.plot(year_data['Month'], year_data['monthly_sum'], label=f'Year {year}')
 
-    plt.xlabel('Month')
-    plt.ylabel(r'FCO$_2$ (gC m$^{-2}$ month$^{-1}$)')
-    plt.title(f'{var_name} by Month')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+        plt.xlabel('Month')
+        plt.ylabel(r'FCO$_2$ (gC m$^{-2}$ month$^{-1}$)')
+        plt.title(f'{var_name} by Month')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
     return monthly_df
+
 #%% uncertainty analysis
 def get_synthetic_data(original_data, n_bootstrap=50, drop_fraction=0.25,
                        sample_size=90200, gapfill_cols=None, random_state=None):
+    """
+    Generate synthetic datasets using bootstrap sampling and random row dropping.
+
+    Parameters
+    ----------
+    original_data : pandas.DataFrame
+        The original dataset to generate synthetic samples from.
+    n_bootstrap : int, optional (default=50)
+        Number of synthetic datasets to generate.
+    drop_fraction : float, optional (default=0.25)
+        Fraction of rows to randomly drop before bootstrap sampling.
+    sample_size : int, optional (default=90200)
+        Number of rows to sample in each bootstrap dataset.
+    gapfill_cols : list of str or str, optional
+        Columns to check for missing values. Rows with all NaNs in these columns will be removed.
+    random_state : int, optional
+        Random seed for reproducibility during bootstrap sampling.
+
+    Returns
+    -------
+    boot_datasets : list of pandas.DataFrame
+        List of synthetic datasets generated from the original data.
+    """
+
+    # Set NumPy random seed for reproducibility of uniform random numbers
+    np.random.seed(42)
+
+    # List to store all synthetic bootstrap datasets
     boot_datasets = []
+
+    # Loop to generate each synthetic dataset
     for i in range(n_bootstrap):
+        # Make a copy of the original data to avoid modifying it
         df = original_data.copy()
+
+        # Add a random column for row-dropping
         df['rand'] = np.random.uniform(size=len(df))
+
+        # Drop rows based on drop_fraction (keep rows where rand >= drop_fraction)
         df = df[df['rand'] >= drop_fraction]
 
-        # Bootstrap sample
+        # Bootstrap sampling: sample 'sample_size' rows with replacement
         df = df.sample(n=sample_size, replace=True, random_state=random_state)
 
-        # Ensure gapfill_cols is a list
+        # If gapfill_cols is specified, ensure it is a list
         if gapfill_cols is not None:
             if isinstance(gapfill_cols, str):
                 gapfill_cols = [gapfill_cols]
+            # Remove rows where all specified gapfill_cols are NaN
             mask = df[gapfill_cols].isna().all(axis=1)
             df = df.loc[~mask]
 
+        # Remove the temporary 'rand' column
         df = df.drop(columns=['rand'], errors='ignore')
+
+        # Append the processed synthetic dataset to the list
         boot_datasets.append(df)
 
+    # Return all generated synthetic datasets
     return boot_datasets
+
 
 def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
     """
@@ -560,6 +628,7 @@ def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
     Returns:
     - predictions: DataFrame. Columns: 'Bootstrap_1', 'Bootstrap_2', ..., with predictions on site_data.
     """
+    np.random.seed(42)
     predictions = pd.DataFrame(index=site_data.index)
 
     for i, boot_df in enumerate(boot_datasets, 1):
