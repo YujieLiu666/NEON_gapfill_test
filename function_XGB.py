@@ -265,7 +265,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
 
     # --- Step 5 (optional): Plots ---
     if plot:
-        # Plot 1: Time series
+        # Plot 1: 
         plt.figure(figsize=(14, 6))
         plt.scatter(site_data['Date'], site_data[y_col], 
                     label="Observed", s=10, alpha=0.3, color="blue", edgecolors="none")
@@ -277,10 +277,10 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
         plt.legend()
         plt.show()
 
-        # Plot 2: Scatter with 1:1 line
+        # Plot 2: 
         plt.figure(figsize=(14, 6))
         plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
-                    label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
+                    label=" ", s=10, alpha=0.3, color="saddlebrown", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title("Measured + gap-filled time series")
