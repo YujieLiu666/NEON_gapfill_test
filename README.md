@@ -13,30 +13,28 @@ If you have any questions, suggestions, or are interested in collaborating, feel
 _Liu, Yujie, et al. (2025). Robust filling of extra-long gaps in eddy covariance CO₂ flux measurements from a temperate deciduous forest using eXtreme Gradient Boosting. Agricultural and Forest Meteorology, 364, 110438._
 https://doi.org/10.1016/j.agrformet.2025.110438 
 
+### 🔗 What is Binder?
+[Binder](https://mybinder.org/) is an open-source service that makes GitHub repositories interactive.
+With just one click, users can launch a virtual compute environment with all dependencies installed. It is especially useful for teaching, code demonstrations, and sharing reproducible research. 
 
-
-
-You can run the codes without setting up environment using binder: 
+**Please click on the badge below**:
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
+- 🐍 **Python environment:** `environment.yml`
 
+- 📂 **Input data:** `data_for_XGB_BART_NEON.csv`  
+  - PPFD, Tair, and VPD are gapfilled using MDS  
+  - NEE_for_gapfill is processed after IQR and u* filtering using REddyProc
 
-- python environment: environment.yml
+- 📜 **Script:**  
+  - All functions are stored in `function_XGB.py`  
+  - Workflow: `workflow_XGB.ipynb` to run the functions
 
-Input data: data_for_XGB_BART_NEON.csv
-- PPFD, Tair and VPD are gapfilled using MDS;
-- NEE_for_gapfill is processed after IQR and u* filtering using REddyProc.
+- 💾 **Output:**  
+  - Gapfilled data: `FC_XGB_prediction.csv`  
+  - Model after hyperparameter tuning: `/XGB_models`  
+  - FC_data_train_test: train and test data for 10-fold CV
 
-Script:
-- All the functions are stored in function_XGB.py.
-- workflow: workflow_XGB.ipynb to run the functions.
-
-
-Output:
-- gapfilled data: FC_XGB_prediction.csv
-- variable importance: FC_feature_importances.csv
-- model after hyperparameter tuning: /XGB_models
-- FC_data_train_test: train and test data for 10-fold CV
 
 
 
