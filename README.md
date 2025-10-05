@@ -28,13 +28,12 @@ https://doi.org/10.1016/j.agrformet.2025.110438
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
   - FC_data_train_test: train and test data for 10-fold CV
 
+Two ways to get started:
+Google colab
 
-🔗 What is Binder?
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YujieLiu666/NEON_gapfill_test/blob/main/workflow_XGB_google_colab.ipynb)
 
-[Binder](https://mybinder.org/) is an open-source service that makes GitHub repositories interactive.
-With just one click, users can launch a virtual compute environment with all dependencies installed. It is especially useful for teaching, code demonstrations, and sharing reproducible research. 
-
-**Please click on the badge below**:
+Binder
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
