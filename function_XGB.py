@@ -74,6 +74,7 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 #         plt.show()
 
 #     return site_data, site_data_no_na
+import seaborn as sns
 def load_data(site_data_dir, file_name, y_col, plot=True):
     """
     Load site data from a CSV file, optionally plot the original data and variable coverage.
@@ -123,16 +124,15 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         # Plot 2: Plot coverage of key variables by Year
         vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill']
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
-
+        
+        # Transpose so variables are rows and years are columns
+        coverage_T = coverage.T
+        
         plt.figure(figsize=(12, 6))
-        for var in vars_to_check:
-            plt.plot(coverage.index, coverage[var], marker='o', linestyle='-', label=var)
-        plt.ylim(0, 1.05)
+        sns.heatmap(coverage_T, annot=True, fmt=".2f", cmap="YlGnBu", cbar_kws={'label': 'Coverage'})
         plt.xlabel('Year')
-        plt.ylabel('Coverage (fraction of non-missing values)')
+        plt.ylabel('Variable')
         plt.title('Variable Coverage by Year')
-        plt.legend()
-        plt.grid(True)
         plt.show()
 
     return site_data, site_data_no_na
