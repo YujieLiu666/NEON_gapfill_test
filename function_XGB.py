@@ -15,6 +15,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import calendar
 import joblib
 from xgboost.callback import EarlyStopping # New style (XGBoost >= 2.0)
+import matplotlib.pyplot as plt
 
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
@@ -279,7 +280,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_
         # Plot 2: 
         plt.figure(figsize=(14, 6))
         plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
-                    label=" ", s=10, alpha=0.3, color="saddlebrown", edgecolors="none")
+                    label=" ", s=10, alpha=0.3, color="brown", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title("Measured + gap-filled time series")
