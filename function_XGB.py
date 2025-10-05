@@ -152,6 +152,83 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
         pkl.dump(model, f)
     print(f"\nModel saved to {model_path}.")
 
+#%% do gapfilling
+def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, site_data_dir, reg, plot=False):
+    """
+    Train an XGBoost model, predict on all data, and save outputs.
+
+    Parameters
+    ----------
+    site_data : pandas.DataFrame
+        Full dataset (may contain missing values in y_col).
+    site_data_no_na : pandas.DataFrame
+        Cleaned dataset without missing values in y_col (used for training).
+    predictors : list of str
+        Column names used as predictors (X).
+    y_col : str
+        Column name of the target variable (y).
+    site_data_dir : pathlib.Path
+        Directory where output CSV will be saved.
+    reg : object
+        Regression model with fit/predict methods (e.g., XGBRegressor).
+    plot : bool, optional (default=False)
+        If True, generate plots of observed vs. predicted values.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Original dataframe with two new columns:
+        - 'XGB_FC_fall': model predictions for all rows
+        - 'XGB_FC_f': observed values when available, otherwise filled with predictions
+    """
+
+    # --- Step 1: Fit model on non-missing data ---
+    X = site_data_no_na[predictors]
+    y = site_data_no_na[y_col]
+    reg.fit(X, y)
+
+    # --- Step 2: Predict on all rows ---
+    X_all = site_data[predictors]
+    y_pred = reg.predict(X_all)
+
+    # --- Step 3: Save predictions into dataframe ---
+    site_data['XGB_FC_fall'] = y_pred
+    site_data['XGB_FC_f'] = np.where(
+        site_data[y_col].notnull(),
+        site_data[y_col],
+        site_data['XGB_FC_fall']
+    )
+
+    # --- Step 4: Save to CSV ---
+    prediction_file = site_data_dir / "XGB_prediction.csv"
+    site_data.to_csv(prediction_file, index=False)
+    print(f"Predictions saved to: {prediction_file}")
+
+    # --- Step 5 (optional): Plots ---
+    if plot:
+        # Plot 1: Time series
+        plt.figure(figsize=(14, 6))
+        plt.scatter(site_data['Date'], site_data[y_col], 
+                    label="Observed", s=10, alpha=0.3, color="blue", edgecolors="none")
+        plt.scatter(site_data['Date'], site_data['XGB_FC_fall'], 
+                    label="Predicted", s=10, alpha=0.3, color="orange", edgecolors="none")
+        plt.xlabel("Date")
+        plt.ylabel(y_col)
+        plt.title(f"Observed vs Predicted over Time for {y_col}")
+        plt.legend()
+        plt.show()
+
+        # Plot 2: Scatter with 1:1 line
+        plt.figure(figsize=(14, 6))
+        plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
+                    label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
+        plt.xlabel("Date")
+        plt.title("Measured + gap-filled time series")
+        plt.legend()
+        plt.show()
+
+    return site_data
+
 #%% check model performance
 def compute_performance_metrics(truth, prediction):
     """
@@ -270,8 +347,6 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     print(f"Mean MAPE: {np.mean(mape_list):.3f} ± {np.std(mape_list):.3f}")
     print("--------------------------------------------------------")
 
-
-   
 #%% check feature importance
 def check_feature_importance(site_data_no_na, predictors, y_col, site_data_dir, reg):
     """
