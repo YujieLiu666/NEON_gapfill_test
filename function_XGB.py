@@ -31,7 +31,6 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['MKL_NUM_THREADS'] = '1'
 # os.environ['OPENBLAS_NUM_THREADS'] = '1'
 # os.environ['BLIS_NUM_THREADS'] = '1'
-
 #%% load input data
 # def load_data(site_data_dir, file_name, y_col, plot=True):
 #     """
@@ -107,7 +106,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     site_data_no_na = site_data.dropna(subset=[y_col])
 
     if plot:
-        # 1️⃣ Plot original target variable
+        # Plot 1: Plot original target variable
         plt.figure(figsize=(12, 6))
         if 'Date' in site_data.columns:
             plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None',
@@ -120,7 +119,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         plt.grid(True)
         plt.show()
 
-        # 2️⃣ Plot coverage of key variables by Year
+        # Plot 2: Plot coverage of key variables by Year
         vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill']
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
 
