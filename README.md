@@ -29,6 +29,7 @@ https://doi.org/10.1016/j.agrformet.2025.110438
 - 📂 **Input data:** `data_for_XGB_BART_NEON.csv`  
   - PPFD, Tair, and VPD are gapfilled using MDS  
   - NEE_for_gapfill is processed after IQR and u* filtering using REddyProc
+  - Processing input data can be found here
 
 - 📜 **Script:**  
   - All functions are stored in `function_XGB.py`  
