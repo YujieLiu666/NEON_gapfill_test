@@ -95,9 +95,9 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     - site_data_no_na : DataFrame
         Site data after dropping rows with missing values in y_col.
     """
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from pathlib import Path
+    # import pandas as pd
+    # import matplotlib.pyplot as plt
+    # from pathlib import Path
 
     # Load CSV
     site_data = pd.read_csv(Path(site_data_dir) / file_name)
@@ -122,7 +122,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         plt.show()
 
         # Plot 2: Plot coverage of key variables by Year
-        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill']
+        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill', "H_for_gapfill", "LE_for_gapfill"]
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
         
         # Transpose so variables are rows and years are columns
@@ -276,7 +276,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, 
         # Plot 2: 
         plt.figure(figsize=(14, 6))
         plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
-                    label=" ", s=10, alpha=0.3, color="#8B4513", edgecolors="none")
+                    label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title("Measured + gap-filled time series")
