@@ -383,7 +383,6 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         )
         
         # New style (XGBoost >= 2.0)
-    
         # reg.fit(
         #         X_train, y_train,
         #         eval_set=[(X_train, y_train), (X_test, y_test)],
