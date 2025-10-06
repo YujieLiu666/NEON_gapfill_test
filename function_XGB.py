@@ -266,7 +266,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, 
         plt.scatter(site_data['Date'], site_data[y_col], 
                     label="Observed", s=10, alpha=0.3, color="blue", edgecolors="none")
         plt.scatter(site_data['Date'], site_data['XGB_FC_fall'], 
-                    label="Predicted", s=10, alpha=0.3, color="orange", edgecolors="none")
+                    label="Predicted", s=10, alpha=0.3, color="yellow", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title(f"Observed vs Predicted over Time for {y_col}")
