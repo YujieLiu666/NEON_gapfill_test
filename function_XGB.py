@@ -383,12 +383,13 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         # )
         
         # New style (XGBoost >= 2.0)
+       
         reg.fit(
-            X_train, y_train,
-            eval_set=[(X_train, y_train), (X_test, y_test)],
-            callbacks=[EarlyStopping(rounds=10, save_best=True)],
-            verbose=False
-        )
+                X_train, y_train,
+                eval_set=[(X_train, y_train), (X_test, y_test)],
+                callbacks=[EarlyStopping(rounds=10, save_best=True)],
+                verbose=False
+            )
 
         # Learning curve for each fold
         print(f"  Plotting learning curve for Fold {fold_number}...")
