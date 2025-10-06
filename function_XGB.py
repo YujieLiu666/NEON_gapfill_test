@@ -386,7 +386,6 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
-            eval_metric="rmse",
             callbacks=[EarlyStopping(rounds=10, save_best=True)],
             verbose=False
         )
