@@ -375,7 +375,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         # Fit model to each fold
         print(f"  Train model for Fold {fold_number}...")
         
-        # reg.fit(
+        reg.fit(
             X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)],
             early_stopping_rounds=10,
