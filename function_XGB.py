@@ -44,14 +44,15 @@ def get_units(var_name):
     
 def get_ylabel(y_col):
     """Return proper y-axis label based on the flux variable."""
-    if y_col.lower() in ['NEE_for_gapfill', 'fco2']:
+    y_lower = y_col.lower()
+    if y_lower in ['nee_for_gapfill', 'fco2']:
         return r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)"
-    elif y_col.lower() == 'H_for_gapfill':
+    elif y_lower == 'h_for_gapfill':
         return r"$H$ (W m$^{-2}$)"
-    elif y_col.lower() == 'LE_for_gapfill':
+    elif y_lower == 'le_for_gapfill':
         return r"$LE$ (W m$^{-2}$)"
     else:
-        return y_col  # fallback, just use column name
+        return y_col
 
 
 def load_data(site_data_dir, file_name, y_col, plot=True):
