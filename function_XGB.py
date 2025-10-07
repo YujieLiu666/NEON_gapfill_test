@@ -100,7 +100,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         plt.show()
 
         # --- 2b: Plot coverage of key variables by Year ---
-        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', f"{y_col}_for_gapfill"]
+        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', y_col]
         
         # Compute coverage: fraction of non-missing values per year
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
