@@ -80,17 +80,23 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         plt.show()
 
         # Plot 2: Plot coverage of key variables by Year
-        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill', "H_for_gapfill", "LE_for_gapfill"]
+        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill', 'H_for_gapfill', 'LE_for_gapfill']
+        
+        # Compute data coverage (fraction of non-missing values)
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
+        
+        # Convert to percentage
+        coverage = coverage * 100
         
         # Transpose so variables are rows and years are columns
         coverage_T = coverage.T
         
+        # Plot
         plt.figure(figsize=(12, 6))
-        sns.heatmap(coverage_T, annot=True, fmt=".2f", cmap="YlGnBu", cbar_kws={'label': 'Coverage'})
+        sns.heatmap(coverage_T, annot=True, fmt=".0f", cmap="YlGnBu", cbar_kws={'label': 'Coverage (%)'})
         plt.xlabel('Year')
         plt.ylabel('Variable')
-        plt.title('Variable Coverage by Year')
+        plt.title('Variable Coverage by Year (%)')
         plt.show()
 
     return site_data
