@@ -467,6 +467,8 @@ def check_feature_importance(site_data, predictors, y_col, reg, plot=True):
 
     return feature_importance_df
 
+
+
 #%% compute annual sums
 def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
     """
@@ -535,6 +537,71 @@ def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
         
     return agg_data
 
+
+def cal_LE_annual_sum(data, var_name, start_year, end_year, plot=True):
+    """
+    Calculate the annual sum of latent heat flux (LE) from half-hourly data.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        DataFrame containing half-hourly data with a 'Year' column.
+    var_name : str
+        Column name of the LE variable to sum.
+    start_year : int
+        First year to aggregate.
+    end_year : int
+        Last year to aggregate.
+    plot : bool, optional (default=True)
+        Whether to plot the annual sums.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with columns 'Year' and 'annual_sum'.
+    """
+
+    # Initialize an empty dataframe to store aggregated data
+    agg_data = pd.DataFrame()
+
+    # Function to get the number of days in a year
+    def get_days_in_year(year):
+        return 366 if calendar.isleap(year) else 365
+
+    # Iterate over years
+    for i in range(start_year, end_year + 1):
+        data_sub = data[data['Year'] == i]
+        half_hour = data_sub[var_name]
+
+        # Calculate aggregated annual sum
+        # Convert W m-2 → MJ m-2 yr-1
+        agg_LE = half_hour.mean(skipna=True)
+        agg = agg_LE * 3600 * 24 * get_days_in_year(i) / 1e6
+
+        agg_data = pd.concat(
+            [agg_data, pd.DataFrame({'Year': [i], 'annual_sum': [agg]})],
+            ignore_index=True
+        )
+
+    # Plot if requested
+    if plot:
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            agg_data['Year'],
+            agg_data['annual_sum'],
+            marker='o',
+            linestyle='-',
+            color='b'
+        )
+        for x, y in zip(agg_data['Year'], agg_data['annual_sum']):
+            plt.text(x, y, f'{y:.1f}', ha='center', va='bottom', fontsize=9)
+        plt.xlabel('Year')
+        plt.ylabel(r'(MJ m$^{-2}$ y$^{-1}$)')
+        plt.title(f'{var_name} by Year')
+        plt.grid(True)
+        plt.show()
+
+    return agg_data
 #%% compute monthly sums
 def cal_FC_monthly_sum(df, var_name, start_year, end_year, plot=True):
     """
