@@ -16,6 +16,7 @@ import calendar
 import joblib
 from xgboost.callback import EarlyStopping # New style (XGBoost >= 2.0)
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
@@ -32,49 +33,8 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['MKL_NUM_THREADS'] = '1'
 # os.environ['OPENBLAS_NUM_THREADS'] = '1'
 # os.environ['BLIS_NUM_THREADS'] = '1'
-#%% load input data
-# def load_data(site_data_dir, file_name, y_col, plot=True):
-#     """
-#     Load site data from a CSV file, optionally plot the original data.
 
-#     Parameters:
-#     - site_data_dir : Path or str
-#         Directory containing the CSV file.
-#     - file_name : str
-#         Name of the CSV file to load (e.g., 'data_for_XGB_US-XYZ.csv').
-#     - y_col : str
-#         The name of the column to plot.
-#     - plot : bool, default True
-#         If True, generate a plot of the original target column.
 
-#     Returns:
-#     - site_data : DataFrame
-#         Original site data.
-#     - site_data_no_na : DataFrame
-#         Site data after dropping rows with missing values in y_col.
-#     """
-#     site_data = pd.read_csv(Path(site_data_dir) / file_name)
-#     if 'Date' in site_data.columns:
-#         site_data['Date'] = pd.to_datetime(site_data['Date'])
-
-#     # Drop rows with missing target values
-#     site_data_no_na = site_data.dropna(subset=[y_col])
-
-#     # Optional plotting
-#     if plot:
-#         plt.figure(figsize=(12, 6))
-#         if 'Date' in site_data.columns:
-#             plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
-#             plt.xlabel('Date')
-#         else:
-#             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
-#         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
-#         plt.title(f'{y_col} original data')
-#         plt.grid(True)
-#         plt.show()
-
-#     return site_data, site_data_no_na
-import seaborn as sns
 def load_data(site_data_dir, file_name, y_col, plot=True):
     """
     Load site data from a CSV file, optionally plot the original data and variable coverage.
@@ -92,8 +52,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     Returns:
     - site_data : DataFrame
         Original site data.
-    - site_data_no_na : DataFrame
-        Site data after dropping rows with missing values in y_col.
+    
     """
     # import pandas as pd
     # import matplotlib.pyplot as plt
@@ -104,8 +63,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     if 'Date' in site_data.columns:
         site_data['Date'] = pd.to_datetime(site_data['Date'])
 
-    # Drop rows with missing target values
-    site_data_no_na = site_data.dropna(subset=[y_col])
+   
 
     if plot:
         # Plot 1: Plot original target variable
@@ -135,10 +93,10 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         plt.title('Variable Coverage by Year')
         plt.show()
 
-    return site_data, site_data_no_na
+    return site_data
 
 #%% hypterparamter tuning
-def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=10): 
+def find_hyperparameters(site_data, predictors, y_col, model_dir, n_jobs=10): 
     """
     Find the best hyperparameters for XGBoost using GridSearchCV, 
     and save the model and best parameters.
@@ -150,6 +108,8 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     - model_dir: Path object or string. Directory to save the model and best parameters.
     - n_jobs: int. Number of parallel jobs for GridSearchCV.
     """
+    # Drop rows with missing target values
+    site_data_no_na = site_data.dropna(subset=[y_col])
     
     # Define hyperparameter search space
     parameters = {
@@ -211,7 +171,7 @@ def find_hyperparameters(site_data_no_na, predictors, y_col, model_dir, n_jobs=1
     print(f"\nModel saved to {model_path}.")
 
 #%% do gapfilling
-def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, plot=False):
+def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
     """
     Train an XGBoost model, predict on all data, and save outputs.
 
@@ -219,8 +179,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, 
     ----------
     site_data : pandas.DataFrame
         Full dataset (may contain missing values in y_col).
-    site_data_no_na : pandas.DataFrame
-        Cleaned dataset without missing values in y_col (used for training).
+    
     predictors : list of str
         Column names used as predictors (X).
     y_col : str
@@ -242,6 +201,7 @@ def get_accurate_prediction(site_data, site_data_no_na, predictors, y_col, reg, 
 
     # --- Step 1: Fit model on non-missing data ---
     np.random.seed(42) 
+    site_data_no_na = site_data.dropna(subset=[y_col])
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
     reg.fit(X, y)
@@ -417,14 +377,13 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     print("--------------------------------------------------------")
 
 #%% check feature importance
-def check_feature_importance(site_data_no_na, predictors, y_col, reg):
+def check_feature_importance(site_data, predictors, y_col, reg):
     """
     Compute and visualize feature importances.
 
     Parameters
     ----------
-    site_data_no_na : pandas.DataFrame
-        Input dataset with no missing values.
+    
     predictors : list of str
         List of column names in `site_data_no_na` to be used as predictors (features).
     y_col : str
@@ -440,6 +399,7 @@ def check_feature_importance(site_data_no_na, predictors, y_col, reg):
     """
 
     # Prepare the data
+    site_data_no_na = site_data.dropna(subset=[y_col])
     X = site_data_no_na[predictors]
     y = site_data_no_na[y_col]
     
