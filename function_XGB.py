@@ -676,6 +676,77 @@ def cal_FC_monthly_sum(df, var_name, start_year, end_year, plot=True):
 
     return monthly_df
 
+def cal_LE_monthly_sum(df, var_name, start_year, end_year, plot=True):
+    """
+    Aggregate half-hourly latent heat flux (LE) data to monthly sums and optionally plot the results.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing half-hourly data with 'Year' and 'Month' columns.
+    var_name : str
+        Column name of the LE variable to aggregate (e.g., 'LE_for_gapfill').
+    start_year : int
+        First year to aggregate.
+    end_year : int
+        Last year to aggregate.
+    plot : bool, optional (default=True)
+        Whether to generate a plot of the monthly sums.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with columns 'Year', 'Month', and 'monthly_sum' (units: MJ m^-2 month^-1).
+    """
+
+    # Initialize an empty DataFrame to store monthly sums
+    monthly_df = pd.DataFrame(columns=['Year', 'Month', 'monthly_sum'])
+
+    # Define a function to get the number of days in a month
+    def get_days_in_month(year, month):
+        return calendar.monthrange(year, month)[1]
+
+    # Filter data for the specified range of years
+    df = df[(df['Year'] >= start_year) & (df['Year'] <= end_year)]
+
+    # Iterate over each year and month
+    for year in range(start_year, end_year + 1):
+        for month in range(1, 13):
+            df_sub = df[(df['Year'] == year) & (df['Month'] == month)]
+
+            # Skip if no data
+            if df_sub.empty:
+                continue
+
+            # Extract variable values
+            half_hour = df_sub[var_name]
+
+            # Calculate monthly mean and convert to MJ m^-2 month^-1
+            mean_w = half_hour.mean(skipna=True)
+            days_in_month = get_days_in_month(year, month)
+            agg = mean_w * 3600 * 24 * days_in_month / 1e6  # W/m² → MJ/m²
+
+            # Concatenate result
+            monthly_df = pd.concat(
+                [monthly_df, pd.DataFrame({'Year': [year], 'Month': [month], 'monthly_sum': [agg]})],
+                ignore_index=True
+            )
+
+    # Plot the results if requested
+    if plot:
+        plt.figure(figsize=(10, 6))
+        for year in monthly_df['Year'].unique():
+            year_data = monthly_df[monthly_df['Year'] == year]
+            plt.plot(year_data['Month'], year_data['monthly_sum'], label=f'Year {year}')
+
+        plt.xlabel('Month')
+        plt.ylabel(r'LE (MJ m$^{-2}$ month$^{-1}$)')
+        plt.title(f'{var_name} by Month')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    return monthly_df
 #%% uncertainty analysis
 def get_synthetic_data(original_data, n_bootstrap=50, drop_fraction=0.25,
                        sample_size=90200, gapfill_cols=None, random_state=None):
