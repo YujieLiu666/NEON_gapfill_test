@@ -411,20 +411,23 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     print("--------------------------------------------------------")
 
 #%% check feature importance
-def check_feature_importance(site_data, predictors, y_col, reg):
+def check_feature_importance(site_data, predictors, y_col, reg, plot=True):
     """
-    Compute and visualize feature importances.
+    Compute and optionally visualize feature importances.
 
     Parameters
     ----------
-    
+    site_data : pandas.DataFrame
+        Input dataset.
     predictors : list of str
-        List of column names in `site_data_no_na` to be used as predictors (features).
+        List of column names to be used as predictors (features).
     y_col : str
-        Column name of the target variable in `site_data_no_na`.
+        Column name of the target variable.
     reg : object
         Regression model with `fit`, `predict`, and `feature_importances_` attributes
         (e.g., XGBRegressor).
+    plot : bool, optional (default=True)
+        If True, generate a bar plot of feature importances.
 
     Returns
     -------
@@ -441,26 +444,29 @@ def check_feature_importance(site_data, predictors, y_col, reg):
     reg.fit(X, y)
 
     # Create a DataFrame to store the feature importances
-    feature_importance_df = pd.DataFrame()
-    feature_importance_df['Feature_Importances'] = reg.feature_importances_
-    feature_importance_df['predictors'] = predictors
+    feature_importance_df = pd.DataFrame({
+        'Feature_Importances': reg.feature_importances_,
+        'predictors': predictors
+    })
 
     # Sort by feature importances
     feature_importance_df = feature_importance_df.sort_values(
         by='Feature_Importances', ascending=False
     )
 
-    # Plot feature importances
-    plt.figure(figsize=(12, 8))
-    plt.bar(feature_importance_df['predictors'], feature_importance_df['Feature_Importances'])
-    plt.title('Feature Importances')
-    plt.xlabel('Features')
-    plt.ylabel('Importance')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+    # Plot feature importances if requested
+    if plot:
+        plt.figure(figsize=(12, 8))
+        plt.bar(feature_importance_df['predictors'], feature_importance_df['Feature_Importances'])
+        plt.title('Feature Importances')
+        plt.xlabel('Features')
+        plt.ylabel('Importance')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
     return feature_importance_df
+
 #%% compute annual sums
 def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
     """
