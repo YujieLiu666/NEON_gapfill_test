@@ -229,8 +229,8 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
     -------
     pandas.DataFrame
         Original dataframe with two new columns:
-        - 'XGB_FC_fall': model predictions for all rows
-        - 'XGB_FC_f': observed values when available, otherwise filled with predictions
+        - 'XGB_fall': model predictions for all rows
+        - 'XGB_f': observed values when available, otherwise filled with predictions
     """
 
     # --- Step 1: Fit model on non-missing data ---
@@ -245,11 +245,11 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
     y_pred = reg.predict(X_all)
 
     # --- Step 3: Save predictions into dataframe ---
-    site_data['XGB_FC_fall'] = y_pred
-    site_data['XGB_FC_f'] = np.where(
+    site_data['XGB_fall'] = y_pred
+    site_data['XGB_f'] = np.where(
         site_data[y_col].notnull(),
         site_data[y_col],
-        site_data['XGB_FC_fall']
+        site_data['XGB_fall']
     )
 
 
@@ -259,7 +259,7 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
         plt.figure(figsize=(14, 6))
         plt.scatter(site_data['Date'], site_data[y_col], 
                     label="Observed", s=10, alpha=0.3, color="blue", edgecolors="none")
-        plt.scatter(site_data['Date'], site_data['XGB_FC_fall'], 
+        plt.scatter(site_data['Date'], site_data['XGB_fall'], 
                     label="Predicted", s=10, alpha=0.3, color="yellow", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(get_ylabel(y_col))
@@ -270,7 +270,7 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
 
         # Plot 2: 
         plt.figure(figsize=(14, 6))
-        plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
+        plt.scatter(site_data['Date'], site_data['XGB_f'], 
                     label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
         plt.xlabel("Date")
         plt.ylabel(get_ylabel(y_col))
