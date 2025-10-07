@@ -286,7 +286,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
     - Shuffle data into k folds (by default n_folds = 10)
     - Train XGBoost (or other estimator) on each fold
     - Plot learning curves for each fold
-    - Compute mean and standard deviation of RMSE, R2, and MAPE across folds
+    - Compute mean and standard deviation of RMSE, and R2 across folds
 
     Parameters
     ----------
@@ -321,7 +321,7 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
 
     # --- Step 2: Train & evaluate for each fold ---
     print("Step 2: Train & evaluate for each fold ...")
-    rmse_list, r2_list, mape_list = [], [], []
+    rmse_list, r2_list = [], []
 
     for fold_number in range(1, n_folds + 1):
         print(f" Processing Fold {fold_number}...")
@@ -373,13 +373,12 @@ def check_model_performance(site_data, predictors, y_col, reg, n_folds=10):
         scores = compute_performance_metrics(y_test, y_pred)
         rmse_list.append(scores['RMSE'])
         r2_list.append(scores['R2'])
-        mape_list.append(scores['MAPE'])
+       
 
     # --- Step 3: Print summary ---
     print("--------------------------------------------------------")
     print(f"\nMean RMSE: {np.mean(rmse_list):.3f} ± {np.std(rmse_list):.3f}")
     print(f"Mean R²: {np.mean(r2_list):.3f} ± {np.std(r2_list):.3f}")
-    print(f"Mean MAPE: {np.mean(mape_list):.3f} ± {np.std(mape_list):.3f}")
     print("--------------------------------------------------------")
 
 #%% check feature importance
