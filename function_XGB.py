@@ -34,7 +34,6 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['OPENBLAS_NUM_THREADS'] = '1'
 # os.environ['BLIS_NUM_THREADS'] = '1'
 
-
 def load_data(site_data_dir, file_name, y_col, plot=True):
     """
     Load site data from a CSV file, optionally plot the original data and variable coverage.
@@ -52,54 +51,60 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
     Returns:
     - site_data : DataFrame
         Original site data.
-    
     """
-    # import pandas as pd
-    # import matplotlib.pyplot as plt
-    # from pathlib import Path
-
-    # Load CSV
+    # --- Step 1: Load CSV file ---
     site_data = pd.read_csv(Path(site_data_dir) / file_name)
+    
+    # Convert 'Date' column to datetime if present
     if 'Date' in site_data.columns:
         site_data['Date'] = pd.to_datetime(site_data['Date'])
 
-   
-
+    # --- Step 2: Plotting (optional) ---
     if plot:
-        # Plot 1: Plot original target variable
+        # --- 2a: Plot original target variable ---
         plt.figure(figsize=(12, 6))
         if 'Date' in site_data.columns:
+            # Plot with Date on x-axis
             plt.plot(site_data['Date'], site_data[y_col], marker='o', linestyle='None',
                      color='blue', alpha=0.6)
             plt.xlabel('Date')
         else:
+            # Plot with row index on x-axis
             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
         plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
         plt.title(f'{y_col} original data')
         plt.grid(True)
         plt.show()
 
-        # Plot 2: Plot coverage of key variables by Year
+        # --- 2b: Plot coverage of key variables by Year ---
         vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill', 'H_for_gapfill', 'LE_for_gapfill']
         
-        # Compute data coverage (fraction of non-missing values)
+        # Compute coverage: fraction of non-missing values per year
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
         
-        # Convert to percentage
+        # Convert coverage fraction to percentage
         coverage = coverage * 100
         
-        # Transpose so variables are rows and years are columns
+        # Transpose: variables as rows, years as columns (for heatmap)
         coverage_T = coverage.T
         
-        # Plot
+        # Plot heatmap of variable coverage
         plt.figure(figsize=(12, 6))
-        sns.heatmap(coverage_T, annot=True, fmt=".0f", cmap="YlGnBu", cbar_kws={'label': 'Coverage (%)'})
+        sns.heatmap(
+            coverage_T,              # data to plot
+            annot=True,              # show numbers
+            fmt=".0f",               # integer format
+            cmap="YlGnBu",           # color map
+            cbar_kws={'label': 'Coverage (%)'}  # colorbar label
+        )
         plt.xlabel('Year')
         plt.ylabel('Variable')
         plt.title('Variable Coverage by Year (%)')
         plt.show()
 
+    # --- Step 3: Return the loaded dataframe ---
     return site_data
+
 
 #%% hypterparamter tuning
 def find_hyperparameters(site_data, predictors, y_col, model_dir, n_jobs=10): 
