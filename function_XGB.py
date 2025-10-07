@@ -35,7 +35,7 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['BLIS_NUM_THREADS'] = '1'
 #%% Load data 
 def get_units(var_name):
-    if var_name.lower() == 'NEE_for_gapfilling':
+    if var_name.lower() == 'NEE_for_gapfill':
         return r"$\mu mol$ m$^{-2}$ s$^{-1}$"
     elif var_name.lower() in ['H_for_gapfilling', 'LE_for_gapfilling']:
         return "W m$^{-2}$"
@@ -43,7 +43,6 @@ def get_units(var_name):
         return ""
     
 def get_ylabel(y_col):
-    """Return proper y-axis label based on the flux variable."""
     y_lower = y_col.lower()
     if y_lower in ['nee_for_gapfill', 'fco2']:
         return r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)"
@@ -53,6 +52,7 @@ def get_ylabel(y_col):
         return r"$LE$ (W m$^{-2}$)"
     else:
         return y_col
+
 
 
 def load_data(site_data_dir, file_name, y_col, plot=True):
