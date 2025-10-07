@@ -44,11 +44,11 @@ def get_units(var_name):
     
 def get_ylabel(y_col):
     """Return proper y-axis label based on the flux variable."""
-    if y_col.lower() in ['nee_for_gapfill', 'fco2']:
+    if y_col.lower() in ['NEE_for_gapfill', 'fco2']:
         return r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)"
-    elif y_col.lower() == 'h_for_gapfill':
+    elif y_col.lower() == 'H_for_gapfill':
         return r"$H$ (W m$^{-2}$)"
-    elif y_col.lower() == 'le_for_gapfill':
+    elif y_col.lower() == 'LE_for_gapfill':
         return r"$LE$ (W m$^{-2}$)"
     else:
         return y_col  # fallback, just use column name
