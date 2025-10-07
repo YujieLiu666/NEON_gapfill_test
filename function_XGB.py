@@ -547,7 +547,7 @@ def cal_LE_annual_sum(data, var_name, start_year, end_year, plot=True):
     data : pandas.DataFrame
         DataFrame containing half-hourly data with a 'Year' column.
     var_name : str
-        Column name of the LE variable to sum.
+        Column name of the LE variable to sum (e.g., 'LE_for_gapfill').
     start_year : int
         First year to aggregate.
     end_year : int
@@ -558,15 +558,13 @@ def cal_LE_annual_sum(data, var_name, start_year, end_year, plot=True):
     Returns
     -------
     pandas.DataFrame
-        DataFrame with columns 'Year' and 'annual_sum'.
+        DataFrame with columns 'Year' and 'annual_sum' (units: MJ m^-2 yr^-1).
     """
-
     # Initialize an empty dataframe to store aggregated data
     agg_data = pd.DataFrame()
 
-    # Function to get the number of days in a year
-    def get_days_in_year(year):
-        return 366 if calendar.isleap(year) else 365
+    # Seconds per year using 365.25-day convention (consistent with agg_by_year)
+    seconds_per_year = 3600 * 24 * 365.25
 
     # Iterate over years
     for i in range(start_year, end_year + 1):
@@ -574,9 +572,9 @@ def cal_LE_annual_sum(data, var_name, start_year, end_year, plot=True):
         half_hour = data_sub[var_name]
 
         # Calculate aggregated annual sum
-        # Convert W m-2 → MJ m-2 yr-1
-        agg_LE = half_hour.mean(skipna=True)
-        agg = agg_LE * 3600 * 24 * get_days_in_year(i) / 1e6
+        # mean W m^-2 -> multiply by seconds in year -> convert to MJ m^-2 yr^-1 (/1e6)
+        mean_w = half_hour.mean(skipna=True)
+        agg = mean_w * seconds_per_year / 1e6
 
         agg_data = pd.concat(
             [agg_data, pd.DataFrame({'Year': [i], 'annual_sum': [agg]})],
@@ -596,12 +594,13 @@ def cal_LE_annual_sum(data, var_name, start_year, end_year, plot=True):
         for x, y in zip(agg_data['Year'], agg_data['annual_sum']):
             plt.text(x, y, f'{y:.1f}', ha='center', va='bottom', fontsize=9)
         plt.xlabel('Year')
-        plt.ylabel(r'(MJ m$^{-2}$ y$^{-1}$)')
+        plt.ylabel(r'LE (MJ m$^{-2}$ y$^{-1}$)')
         plt.title(f'{var_name} by Year')
         plt.grid(True)
         plt.show()
 
     return agg_data
+
 #%% compute monthly sums
 def cal_FC_monthly_sum(df, var_name, start_year, end_year, plot=True):
     """
