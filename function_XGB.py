@@ -33,6 +33,26 @@ print("Matplotlib version:", plt.matplotlib.__version__)
 # os.environ['MKL_NUM_THREADS'] = '1'
 # os.environ['OPENBLAS_NUM_THREADS'] = '1'
 # os.environ['BLIS_NUM_THREADS'] = '1'
+#%% Load data 
+def get_units(var_name):
+    if var_name.lower() == 'NEE_for_gapfilling':
+        return r"$\mu mol$ m$^{-2}$ s$^{-1}$"
+    elif var_name.lower() in ['H_for_gapfilling', 'LE_for_gapfilling']:
+        return "W m$^{-2}$"
+    else:
+        return ""
+    
+def get_ylabel(y_col):
+    """Return proper y-axis label based on the flux variable."""
+    if y_col.lower() in ['nee_for_gapfill', 'fco2']:
+        return r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)"
+    elif y_col.lower() == 'h_for_gapfill':
+        return r"$H$ (W m$^{-2}$)"
+    elif y_col.lower() == 'le_for_gapfill':
+        return r"$LE$ (W m$^{-2}$)"
+    else:
+        return y_col  # fallback, just use column name
+
 
 def load_data(site_data_dir, file_name, y_col, plot=True):
     """
@@ -71,13 +91,15 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
         else:
             # Plot with row index on x-axis
             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
-        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
+        # plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
+        plt.ylabel(get_ylabel(y_col))
         plt.title(f'{y_col} original data')
+
         plt.grid(True)
         plt.show()
 
         # --- 2b: Plot coverage of key variables by Year ---
-        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', 'NEE_for_gapfill', 'H_for_gapfill', 'LE_for_gapfill']
+        vars_to_check = ['Tair', 'Tsoil', 'VPD', 'PPFD', f"{y_col}_for_gapfill"]
         
         # Compute coverage: fraction of non-missing values per year
         coverage = site_data.groupby('Year')[vars_to_check].apply(lambda x: x.notna().mean())
@@ -239,7 +261,8 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
         plt.scatter(site_data['Date'], site_data['XGB_FC_fall'], 
                     label="Predicted", s=10, alpha=0.3, color="yellow", edgecolors="none")
         plt.xlabel("Date")
-        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
+        plt.ylabel(get_ylabel(y_col))
+
         plt.title(f"Observed vs Predicted over Time for {y_col}")
         plt.legend()
         plt.show()
@@ -249,7 +272,7 @@ def get_accurate_prediction(site_data, predictors, y_col, reg, plot=False):
         plt.scatter(site_data['Date'], site_data['XGB_FC_f'], 
                     label=" ", s=10, alpha=0.3, color="green", edgecolors="none")
         plt.xlabel("Date")
-        plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
+        plt.ylabel(get_ylabel(y_col))
         plt.title("Measured + gap-filled time series")
         plt.legend()
         plt.show()
