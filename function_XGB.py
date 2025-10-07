@@ -93,7 +93,7 @@ def load_data(site_data_dir, file_name, y_col, plot=True):
             # Plot with row index on x-axis
             plt.plot(site_data[y_col], marker='o', linestyle='None', color='blue', alpha=0.6)
         # plt.ylabel(r"$FCO_{2}$ ($\mu mol$ m$^{-2}$ s$^{-1}$)")
-        plt.ylabel(get_ylabel(y_col))
+        # plt.ylabel(get_ylabel(y_col))
         plt.title(f'{y_col} original data')
 
         plt.grid(True)
