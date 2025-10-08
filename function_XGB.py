@@ -17,6 +17,7 @@ import joblib
 from xgboost.callback import EarlyStopping # New style (XGBoost >= 2.0)
 import matplotlib.pyplot as plt
 import seaborn as sns
+import shap
 
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
@@ -467,7 +468,57 @@ def check_feature_importance(site_data, predictors, y_col, reg, plot=True):
 
     return feature_importance_df
 
+def check_shap_importance(site_data, predictors, y_col, reg, plot=True):
+    """
+    Compute and optionally visualize SHAP-based feature importances.
 
+    Parameters
+    ----------
+    site_data : pandas.DataFrame
+        Input dataset.
+    predictors : list of str
+        List of column names to be used as predictors (features).
+    y_col : str
+        Column name of the target variable.
+    reg : object
+        Regression model with `fit` and `predict` methods (e.g., XGBRegressor).
+    plot : bool, optional (default=True)
+        If True, generate a SHAP summary plot of feature importances.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame containing mean absolute SHAP values per feature,
+        sorted in descending order.
+    """
+
+    # Prepare the data (remove missing target values)
+    site_data_no_na = site_data.dropna(subset=[y_col])
+    X = site_data_no_na[predictors]
+    y = site_data_no_na[y_col]
+    
+    # Fit the regression model
+    reg.fit(X, y)
+
+    # Initialize SHAP explainer (tree-based models use TreeExplainer)
+    explainer = shap.TreeExplainer(reg)
+    shap_values = explainer.shap_values(X)
+
+    # Compute mean absolute SHAP values per feature
+    mean_shap_values = pd.DataFrame({
+        'predictors': predictors,
+        'MeanAbs_SHAP': abs(shap_values).mean(axis=0)
+    }).sort_values(by='MeanAbs_SHAP', ascending=False)
+
+    # Plot SHAP summary if requested
+    if plot:
+        plt.figure(figsize=(10, 8))
+        shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+        plt.title("SHAP Feature Importances")
+        plt.tight_layout()
+        plt.show()
+
+    return mean_shap_values
 
 #%% compute annual sums
 def cal_FC_annual_sum(data, var_name, start_year, end_year, plot=True):
