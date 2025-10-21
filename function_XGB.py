@@ -879,7 +879,6 @@ def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
     """
     np.random.seed(42)
     
-    site_data = site_data.dropna(subset=[y_col])
     predictions = pd.DataFrame(index=site_data.index) # initializing an empty DataFrame that has the same index as site_data
     
     for i, boot_df in enumerate(boot_datasets, 1):
@@ -898,7 +897,8 @@ def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
         model.fit(X_train, y_train)
 
         # Predict on original site_data
-        X_pred = site_data[predictors]
+        site_data_copy = site_data.copy()
+        X_pred = site_data_copy[predictors]
         predictions[f'Bootstrap_{i}'] = model.predict(X_pred)
 
     return predictions
