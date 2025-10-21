@@ -878,8 +878,10 @@ def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
     - predictions: DataFrame. Columns: 'Bootstrap_1', 'Bootstrap_2', ..., with predictions on site_data.
     """
     np.random.seed(42)
-    predictions = pd.DataFrame(index=site_data.index)
-
+    site_data = site_data.replace([np.inf, -inf], np.nan)
+    site_data = site_data.dropna(subset=[y_col])
+    predictions = pd.DataFrame(index=site_data.index) # initializing an empty DataFrame that has the same index as site_data
+    
     for i, boot_df in enumerate(boot_datasets, 1):
         # Prepare training data
         X_train = boot_df[predictors]
