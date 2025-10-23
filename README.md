@@ -4,7 +4,7 @@
 
 This is based on my previous paper published in _Agricultural and Forest Meteorology_. I have better organized the code and added a **Binder environment**, making it more user-friendly for everyone interested in gap-filling flux data using a machine learning model **XGBoost**. 
 
-## 🚀 Two ways to get started
+## 🚀 Get started using google colab
 
 **Google Colab**  
 
