@@ -14,6 +14,9 @@ This is based on my previous paper published in _Agricultural and Forest Meteoro
 **Group discussion**
 https://docs.google.com/document/d/1YJBQzLg3C42DVI0PhrJltVhKMfdSD9FJsxN3Uo1pBLc/edit?usp=sharing
 
+**Feedback survey**
+https://docs.google.com/forms/d/e/1FAIpQLSflPGHkiLr6P1Kc6ETOtzRVXk2m8Sp1zVbCUQdxT61F7kE98w/viewform
+
 ---
 
 **Binder (experimental, in progress)**
