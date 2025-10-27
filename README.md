@@ -19,9 +19,7 @@ https://docs.google.com/forms/d/e/1FAIpQLSflPGHkiLr6P1Kc6ETOtzRVXk2m8Sp1zVbCUQdx
 
 ---
 
-**Binder (experimental, in progress)**
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 
 📬 **Questions or Collaborations?**
@@ -47,6 +45,9 @@ https://doi.org/10.1016/j.agrformet.2025.110438
 - 💾 **Output:**  
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
 
+**Binder (experimental, in progress)**
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 
 
