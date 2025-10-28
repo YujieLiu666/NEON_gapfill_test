@@ -17,7 +17,7 @@ import joblib
 from xgboost.callback import EarlyStopping # New style (XGBoost >= 2.0)
 import matplotlib.pyplot as plt
 import seaborn as sns
-import shap
+# import shap
 
 print("Python version:", sys.version)
 print("NumPy version:", np.__version__)
@@ -864,7 +864,7 @@ def get_synthetic_data(original_data, n_bootstrap=50, drop_fraction=0.25,
     return boot_datasets
 
 
-def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
+def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col, model_dir):
     """
     Train XGBoost models on bootstrap datasets and predict on original site_data.
 
@@ -887,13 +887,8 @@ def train_on_synthetic_predict(site_data, boot_datasets, predictors, y_col):
         y_train = boot_df[y_col]
 
         # Train model
-        model = XGBRegressor(
-            objective='reg:squarederror',
-            random_state=42,
-            n_estimators=100,
-            max_depth=5,
-            learning_rate=0.1
-        )
+        
+        model = joblib.load(model_dir / f"XGB_model_{y_col}.pkl") 
         model.fit(X_train, y_train)
 
         # Predict on original site_data
