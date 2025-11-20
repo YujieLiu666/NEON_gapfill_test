@@ -12,12 +12,6 @@ The work is supported by NEON ambassador program.
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YujieLiu666/NEON_gapfill_test/blob/main/workflow_XGB_google_colab.ipynb)
 
 
-**Group discussion**
-https://docs.google.com/document/d/1YJBQzLg3C42DVI0PhrJltVhKMfdSD9FJsxN3Uo1pBLc/edit?usp=sharing
-
-**Feedback survey**
-https://docs.google.com/forms/d/e/1FAIpQLSflPGHkiLr6P1Kc6ETOtzRVXk2m8Sp1zVbCUQdxT61F7kE98w/viewform
-
 ---
 
 
@@ -45,6 +39,8 @@ https://doi.org/10.1016/j.agrformet.2025.110438
 
 - 💾 **Output:**  
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
+
+
 
 **Binder (experimental, in progress)**
 
