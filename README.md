@@ -30,7 +30,7 @@ https://doi.org/10.1016/j.agrformet.2025.110438
   - PPFD, Tair, and VPD are gapfilled using MDS  
   - NEE_for_gapfill is processed after IQR and u* filtering using REddyProc. You can find out how to do that from the tutorial one here: https://github.com/YujieLiu666/Bridginggap-flux
   - GCC data were downloaded from https://phenocam.nau.edu/webcam/
-  - Processing input data using REddyProc? Tutorial can be found here!
+  - How to process input data using REddyProc? Please find out the tutorial here: https://github.com/YujieLiu666/Bridginggap-flux 
 
 - 📜 **Script:**  
   - All functions are stored in `function_XGB.py`  
