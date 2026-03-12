@@ -15,8 +15,6 @@ The work is supported by NEON ambassador program.
 ---
 
 
-
-
 📬 **Questions or Collaborations?**
 
 If you have any questions, suggestions, or are interested in collaborating, feel free to reach out! yujie.liu@nau.edu 
@@ -40,11 +38,6 @@ https://doi.org/10.1016/j.agrformet.2025.110438
 - 💾 **Output:**  
   - Model after hyperparameter tuning: saved in subfolder `/XGB_models`  
 
-
-
-**Binder (experimental, in progress)**
-
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/YujieLiu666/NEON_gapfill_test/HEAD?urlpath=lab&version=2)
 
 
 
